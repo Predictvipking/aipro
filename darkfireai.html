@@ -2,251 +2,311 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>乂ᴅᴀʀᴋ乡ғɪʀᴇ AI Pro | PREMIUM PWA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>乂ᴅᴀʀᴋ乡ғɪʀᴇ v4.0 | ALWAYS SIDE-BY-SIDE</title>
     
-    <!-- PWA Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#050505">
-    
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
     <style>
         :root {
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --bg-dark: #050508;
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
             --yellow: #FFD700;
-            --blue: #00A3FF;
-            --red: #FF3B30;
-            --green: #34C759;
-            --violet: #AF52DE;
-            --text-main: #FFFFFF;
-            --text-dim: #8E8E93;
+            --blue: #00E5FF;
+            --red: #FF2D55;
+            --green: #00FF66;
+            --violet: #BF5AF2;
+            --premium-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --text-main: #F4F4F5;
+            --text-dim: #94949E;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            font-family: 'Ubuntu', sans-serif;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .header-title, .sig-big, .sig-small, .ov-num, .stat-val, .tab-btn, .about-title { font-family: 'Orbitron', sans-serif; }
 
         body {
-            background-color: #050505; /* OLED Black */
-            color: var(--text-main);
-            margin: 0;
-            padding: env(safe-area-inset-top) 8px env(safe-area-inset-bottom) 8px;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 50%);
+            margin: 0; padding: 0;
+            display: flex; justify-content: center; align-items: flex-start;
+            min-height: 100vh; color: var(--text-main);
+        }
+
+        .mobile-wrapper {
+            width: 100%;
+            max-width: 450px;
+            min-height: 100vh;
+            background-color: rgba(5, 5, 8, 0.85);
+            border-left: 1px solid rgba(255,255,255,0.02);
+            border-right: 1px solid rgba(255,255,255,0.02);
+            position: relative;
+            padding: 12px;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Glass Effect Helper */
         .glass {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 16px;
         }
 
-        /* Login Screen */
+        /* ----------------------------------
+           STRICT SIDE-BY-SIDE LOGIN SYSTEM
+        ------------------------------------- */
         #login-screen {
-            position: fixed; inset: 0; z-index: 9999;
-            background: #000; display: flex; align-items: center; justify-content: center;
-        }
-        .login-box {
-            width: 85%; max-width: 340px; padding: 25px; text-align: center;
-        }
-        .login-box h1 { font-size: 20px; color: var(--yellow); margin-bottom: 20px; letter-spacing: 2px; }
-        .login-input {
-            width: 100%; background: #111; border: 1px solid #222; padding: 14px;
-            border-radius: 10px; color: #fff; text-align: center; font-size: 16px; margin-bottom: 15px;
-        }
-        .login-btn {
-            width: 100%; background: linear-gradient(45deg, var(--yellow), #FFB000);
-            border: none; padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer;
+            position: absolute; inset: 0; z-index: 999;
+            background: #040406; 
+            display: flex; 
+            flex-direction: row; /* মোবাইল ও ডেক্সটপ সব জায়গায় পাশাপাশি রাখবে */
+            padding: 10px; 
+            gap: 8px; 
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Main Dashboard */
+        /* Left Side: About Section (Ultra Compact) */
+        .login-split-about {
+            flex: 1.1;
+            height: 90%;
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.04);
+            background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(0,0,0,0) 100%);
+        }
+        .about-title { 
+            font-size: 10px; font-weight: 900; margin-bottom: 12px; 
+            letter-spacing: 1px; text-align: center;
+            background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .about-item { display: flex; gap: 6px; font-size: 9px; color: var(--text-dim); margin-bottom: 8px; line-height: 1.3; }
+        .about-item:last-child { margin-bottom: 0; }
+        .about-item i { background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 11px; margin-top: 1px; width: 12px; text-align: center; }
+
+        /* Right Side: Access Key Portal (Ultra Compact) */
+        .login-split-portal {
+            flex: 0.9;
+            height: 90%;
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.01);
+        }
+        .portal-h2 { font-size: 10px; font-weight: 700; color: #fff; margin: 0 0 12px; letter-spacing: 0.5px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .login-input {
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 10px;
+            border-radius: 8px; color: #fff; text-align: center; font-size: 11px; margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif; letter-spacing: 2px; transition: all 0.3s ease;
+        }
+        .login-input:focus { border-color: #a855f7; outline: none; background: rgba(255,255,255,0.04); box-shadow: 0 0 10px rgba(168,85,247,0.15); }
+        .login-btn {
+            width: 100%; background: var(--premium-gradient); border: none; padding: 11px;
+            border-radius: 8px; font-weight: 900; cursor: pointer; color: #fff;
+            font-size: 9.5px; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(168,85,247,0.2); transition: all 0.2s ease;
+        }
+        .login-btn:active { transform: scale(0.97); }
+        #error { color: var(--red); font-family: 'Orbitron', sans-serif; font-size: 8px; text-align: center; margin-top: 8px; font-weight: 700; }
+
+        /* বড় স্ক্রিনের জন্য একটু প্যাডিং অ্যাডজাস্টমেন্ট */
+        @media (min-width: 500px) {
+            #login-screen { max-width: 780px; height: 320px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 25px 60px rgba(0,0,0,0.8); gap: 14px; padding: 15px; }
+            .about-title { font-size: 13px; }
+            .about-item { font-size: 11.5px; gap: 10px; margin-bottom: 12px; }
+            .portal-h2 { font-size: 13px; margin-bottom: 16px; }
+            .login-input { font-size: 13px; padding: 14px; }
+            .login-btn { font-size: 12px; padding: 14px; }
+        }
+
         #dashboard { display: none; }
 
-        /* Header */
-        .header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 5px; margin-bottom: 5px;
-        }
-        .header-title { font-size: 16px; font-weight: 700; color: var(--yellow); }
-        .header-right { display: flex; gap: 12px; align-items: center; }
+        /* ----------------------------------
+           DASHBOARD CONTENT STYLE
+        ------------------------------------- */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 4px; margin-bottom: 14px; }
+        .header-title { font-size: 18px; font-weight: 900; background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
+        .timer-box { font-size: 13px; font-weight: 700; background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 30px; border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 6px; font-family: 'Orbitron', sans-serif; }
 
-        /* Stats Row */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px;
-        }
-        .stat-card { padding: 8px; text-align: center; }
-        .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 3px; }
-        .stat-val { font-size: 14px; font-weight: 700; color: var(--green); }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+        .stat-card { padding: 12px 6px; text-align: center; }
+        .stat-card i { font-size: 13px; margin-bottom: 4px; background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-label { font-size: 8.5px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        .stat-val { font-size: 13px; font-weight: 700; color: var(--green); margin-top: 2px; }
 
-        /* Prediction Card 3x2 */
-        .prediction-card {
-            padding: 12px; display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-bottom: 8px;
-        }
-        .p-info { display: flex; flex-direction: column; gap: 8px; }
-        .p-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
-        .p-val { font-size: 13px; font-weight: 600; }
-        .signal-big { font-size: 32px; font-weight: 900; color: var(--yellow); margin-top: -2px; }
-        .signal-small { font-size: 32px; font-weight: 900; color: var(--blue); margin-top: -2px; }
+        .prediction-card { padding: 18px; display: grid; grid-template-columns: 1fr auto; gap: 12px; margin-bottom: 14px; }
+        .p-info { display: flex; flex-direction: column; gap: 14px; }
+        .p-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px; font-weight: 600; }
+        .p-label i { background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .p-val { font-size: 15px; font-weight: 700; color: #fff; }
+        .sig-big { font-size: 40px; font-weight: 900; color: var(--yellow); margin-top: -4px; text-shadow: 0 0 20px rgba(255,215,0,0.3); }
+        .sig-small { font-size: 40px; font-weight: 900; color: var(--blue); margin-top: -4px; text-shadow: 0 0 20px rgba(0,229,255,0.3); }
 
-        .p-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; }
-        .circle-group { display: flex; gap: 8px; }
+        .circle-group { display: flex; gap: 6px; margin-top: 4px; }
         .circle {
-            width: 48px; height: 48px; border-radius: 50%;
+            width: 50px; height: 50px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px; font-weight: 700; border: 2px solid rgba(255,255,255,0.1);
+            font-size: 22px; font-weight: 900; border: 2px solid rgba(255,255,255,0.05);
+            font-family: 'Orbitron', sans-serif; box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
         }
-
-        /* Number Colors */
         .c0 { background: linear-gradient(135deg, var(--red) 50%, var(--violet) 50%); }
         .c5 { background: linear-gradient(135deg, var(--green) 50%, var(--violet) 50%); }
-        .c-red { background-color: var(--red); }
-        .c-green { background-color: var(--green); }
+        .c-red { background-color: var(--red); box-shadow: 0 0 15px rgba(255,45,85,0.2); }
+        .c-green { background-color: var(--green); color: #050508; box-shadow: 0 0 15px rgba(0,255,102,0.2); }
 
-        /* Trend Analysis */
-        .trend-box { padding: 8px; margin-bottom: 8px; }
-        .trend-dots { display: flex; gap: 5px; overflow-x: auto; padding: 5px 0; }
-        .dot { 
-            min-width: 22px; height: 22px; border-radius: 4px; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 10px; font-weight: 700; color: #000;
+        .trend-box { padding: 10px; display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; margin-bottom: 14px; }
+        .dot { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; color: #000; }
+
+        .ov-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 14px; }
+        .ov-card { padding: 10px 0; text-align: center; }
+        .ov-num { font-size: 15px; font-weight: 900; margin-bottom: 2px; }
+
+        .tabs-container { display: flex; gap: 6px; margin: 20px 2px 8px; }
+        .tab-btn {
+            flex: 1; padding: 12px 5px; background: rgba(255,255,255,0.01);
+            border: 1px solid var(--glass-border); color: var(--text-dim);
+            font-size: 11px; font-weight: 700; border-radius: 10px; cursor: pointer;
+            letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s;
         }
+        .tab-btn.active {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            color: #fff; border-color: rgba(168,85,247,0.3);
+        }
+        .tab-btn.active i { background: var(--premium-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* Overdue 5x2 */
-        .overdue-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 8px; }
-        .ov-card { padding: 6px 0; text-align: center; }
-        .ov-num { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
-        .ov-miss { font-size: 9px; color: var(--text-dim); }
-
-        /* History Table */
-        .history-box { overflow: hidden; margin-top: 5px; }
         .h-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        .h-table th { padding: 10px 4px; text-align: center; color: var(--text-dim); border-bottom: 1px solid var(--glass-border); }
-        .h-table td { padding: 10px 4px; text-align: center; border-bottom: 1px solid var(--glass-border); }
+        .h-table th { padding: 12px 4px; color: var(--text-dim); border-bottom: 1px solid var(--glass-border); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .h-table td { padding: 12px 4px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.02); }
 
-        .pagination { display: flex; justify-content: space-between; align-items: center; padding: 12px; }
-        .pg-btn { background: #1a1a1a; border: none; color: #fff; padding: 6px 15px; border-radius: 6px; }
+        .txt-rv { color: var(--red); }
+        .txt-gv { color: var(--green); }
+        .txt-red { color: var(--red); font-weight: 600; }
+        .txt-green { color: var(--green); font-weight: 600; }
 
-        /* Custom Font Colors */
-        .txt-rv { color: var(--red); text-shadow: 0 0 5px var(--violet); }
-        .txt-gv { color: var(--green); text-shadow: 0 0 5px var(--violet); }
-        .txt-red { color: var(--red); }
-        .txt-green { color: var(--green); }
-        .win { color: var(--green); font-weight: bold; }
-        .loss { color: var(--red); font-weight: bold; }
-
+        .pagination { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-top: 1px solid rgba(255,255,255,0.02); }
+        .pg-btn { background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); color: #fff; padding: 8px 14px; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- Login -->
+<div class="mobile-wrapper">
     <div id="login-screen">
-        <div class="login-box glass">
-            <h1><i class="fas fa-shield-halved"></i> ACCESS</h1>
-            <input type="password" id="access-key" class="login-input" placeholder="Enter Access Key">
-            <button class="login-btn" onclick="login()">UNLOCK DASHBOARD</button>
+        <div class="login-split-about glass">
+            <div class="about-title"><i class="fa-solid fa-bolt"></i> CORE NODE</div>
+            <div class="about-item">
+                <i class="fa-solid fa-brain"></i>
+                <div><strong>AI Core:</strong> Recursive data predictive algorithms.</div>
+            </div>
+            <div class="about-item">
+                <i class="fa-solid fa-network-wired"></i>
+                <div><strong>Bridge:</strong> Zero latency sync mechanism.</div>
+            </div>
+            <div class="about-item">
+                <i class="fa-solid fa-shield-halved"></i>
+                <div><strong>Vault:</strong> Pure encrypted terminal layers.</div>
+            </div>
+        </div>
+
+        <div class="login-split-portal glass">
+            <div class="portal-h2"><i class="fa-solid fa-unlock-keyhole" style="color:#a855f7"></i> PORTAL</div>
+            <input type="password" id="access-key" class="login-input" placeholder="KEY">
+            <button class="login-btn" onclick="login()">INITIALIZE</button>
+            <p id="error" style="display:none;"><i class="fa-solid fa-circle-exclamation"></i> INVALID KEY.</p>
         </div>
     </div>
 
-    <!-- Main Dashboard -->
     <div id="dashboard">
         <div class="header">
-            <div class="header-title"><i class="fas fa-fire-flame-curved"></i> 乂ᴅᴀʀᴋ乡ғɪʀᴇ</div>
-            <div class="header-right">
-                <span style="font-size: 13px; font-weight: 600;"><i class="far fa-clock"></i> <span id="timer">00:00</span></span>
-                <i class="fas fa-power-off" style="color:var(--red); font-size: 16px;" onclick="location.reload()"></i>
+            <div class="header-title"><i class="fa-solid fa-fire-flame-curved"></i> 乂ᴅᴀʀᴋ乡ғɪʀᴇ</div>
+            <div class="timer-box">
+                <i class="fa-regular fa-clock" style="color:var(--blue)"></i>
+                <span id="timer">00:59</span>
+                <i class="fa-solid fa-power-off" style="color:var(--red); cursor:pointer;" onclick="location.reload()"></i>
             </div>
         </div>
 
-        <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card glass">
+                <i class="fa-solid fa-crosshairs"></i>
                 <div class="stat-label">Accuracy</div>
-                <div class="stat-val">91.4%</div>
+                <div class="stat-val">94.8%</div>
             </div>
             <div class="stat-card glass">
-                <div class="stat-label">Level</div>
-                <div id="level-val" class="stat-val" style="color:var(--yellow)">L1</div>
+                <i class="fa-solid fa-chart-line"></i>
+                <div class="stat-label">Martingale</div>
+                <div id="m-level" class="stat-val" style="color:var(--yellow)">L1</div>
             </div>
             <div class="stat-card glass">
+                <i class="fa-solid fa-database"></i>
                 <div class="stat-label">Multiplier</div>
-                <div id="mult-val" class="stat-val">1x</div>
+                <div id="m-mult" class="stat-val">1x</div>
             </div>
         </div>
 
-        <!-- Prediction Card -->
         <div class="prediction-card glass">
             <div class="p-info">
                 <div>
-                    <div class="p-label">Period Number</div>
-                    <div class="p-val" id="period-num">----------</div>
+                    <div class="p-label"><i class="fa-solid fa-fingerprint"></i> Interval ID</div>
+                    <div class="p-val" id="period-num">Loading...</div>
                 </div>
                 <div>
-                    <div class="p-label">Signal</div>
-                    <div id="signal-text" class="signal-big">WAIT</div>
+                    <div class="p-label"><i class="fa-solid fa-circle-nodes"></i> Prediction Result</div>
+                    <div id="signal-text" class="sig-big">BIG</div>
                 </div>
             </div>
-            <div class="p-right">
-                <i class="fas fa-arrows-rotate" style="color:var(--green); font-size:18px;" onclick="refreshData()"></i>
-                <div class="circle-group" id="circle-group">
-                    <div class="circle c-red">?</div>
-                    <div class="circle c-green">?</div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content:space-between;">
+                <i class="fa-solid fa-arrows-rotate" style="color:var(--green); cursor:pointer; font-size:14px; background: rgba(255,255,255,0.02); padding: 8px; border-radius: 50%; border: 1px solid var(--glass-border);" onclick="generatePrediction()"></i>
+                <div class="circle-group" id="circles">
+                    <div class="circle c-red">8</div>
+                    <div class="circle c-green">1</div>
                 </div>
             </div>
         </div>
 
-        <!-- Trend -->
-        <div class="section-title" style="font-size:10px; margin: 8px 5px 4px; color:var(--text-dim);">
-            <i class="fas fa-chart-line"></i> TREND ANALYSIS
-        </div>
-        <div class="trend-box glass">
-            <div class="trend-dots" id="trend-list"></div>
+        <div style="font-size: 9px; font-weight:700; color: var(--text-dim); margin: 14px 2px 6px; letter-spacing: 0.5px;"><i class="fa-solid fa-chart-area" style="color:var(--yellow); margin-right:4px;"></i> HORIZONTAL VISUAL ANALYTICS</div>
+        <div class="trend-box glass" id="trend-list"></div>
+
+        <div style="font-size: 9px; font-weight:700; color: var(--text-dim); margin: 14px 2px 6px; letter-spacing: 0.5px;"><i class="fa-solid fa-hourglass-empty" style="color:var(--blue); margin-right:4px;"></i> DELAY PROBABILITY MONITOR</div>
+        <div class="ov-grid" id="overdue-grid"></div>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab('game')"><i class="fa-solid fa-server"></i> Game History</button>
+            <button class="tab-btn" onclick="switchTab('my')"><i class="fa-solid fa-user-shield"></i> My History</button>
         </div>
 
-        <!-- Overdue -->
-        <div class="section-title" style="font-size:10px; margin: 8px 5px 4px; color:var(--text-dim);">
-            <i class="fas fa-hourglass-half"></i> MISSING NUMBERS
-        </div>
-        <div class="overdue-grid">
-            <div id="ov-row-1" style="display:contents"></div>
-            <div id="ov-row-2" style="display:contents"></div>
-        </div>
-
-        <!-- History -->
         <div class="history-box glass">
             <table class="h-table">
-                <thead>
-                    <tr>
-                        <th>Period</th>
-                        <th>Color</th>
-                        <th>Size</th>
-                        <th>Num</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="history-body"></tbody>
+                <thead id="table-head">
+                    </thead>
+                <tbody id="history-list"></tbody>
             </table>
             <div class="pagination">
-                <button class="pg-btn" onclick="changePage(-1)"><i class="fas fa-angle-left"></i></button>
-                <span id="page-info" style="font-size:11px">Page 1/20</span>
-                <button class="pg-btn" onclick="changePage(1)"><i class="fas fa-angle-right"></i></button>
+                <button class="pg-btn" onclick="changePage(-1)"><i class="fa-solid fa-angle-left"></i></button>
+                <span id="page-info" style="font-size:11px; font-family:'Orbitron', sans-serif; color:var(--text-dim)">Page 1 / 20</span>
+                <button class="pg-btn" onclick="changePage(1)"><i class="fa-solid fa-angle-right"></i></button>
             </div>
         </div>
     </div>
+</div>
 
 <script>
     const KEYS = ["J0el1991$", "ZRX_PAPA_01", "ZRX_PAPA_02", "ZRX_PAPA_03", "ZRX_PAPA_04"];
-    let historyData = [];
+    let gameHistory = [];
+    let myHistory = [];
+    
+    let currentTab = 'game';
     let currentPage = 1;
-    let mLevel = 1;
+    let martLevel = 1;
+    let currentPeriodGlobal = "";
+    let lastGeneratedPrediction = null;
 
     function login() {
         const key = document.getElementById('access-key').value;
@@ -254,116 +314,196 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             startApp();
-        } else { alert("Invalid Key!"); }
+        } else { document.getElementById('error').style.display='block'; }
     }
 
     function getNumInfo(n) {
-        if (n === 0) return { class: 'c0', label: 'Red|Violet', txt: 'txt-rv' };
-        if (n === 5) return { class: 'c5', label: 'Green|Violet', txt: 'txt-gv' };
+        if (n === 0) return { class: 'c0', label: 'R|V', txt: 'txt-rv' };
+        if (n === 5) return { class: 'c5', label: 'G|V', txt: 'txt-gv' };
         if ([1, 3, 7, 9].includes(n)) return { class: 'c-green', label: 'Green', txt: 'txt-green' };
         return { class: 'c-red', label: 'Red', txt: 'txt-red' };
     }
 
     function startApp() {
-        updateClock();
-        setInterval(updateClock, 1000);
-        initHistory();
+        updateClockAndPeriod();
+        initGameHistory(); 
         updateOverdue();
-        refreshData();
+        generatePrediction();
+        setInterval(updateClockAndPeriod, 1000);
     }
 
-    function updateClock() {
+    function updateClockAndPeriod() {
         const now = new Date();
         const sec = now.getSeconds();
-        const rem = 60 - sec;
+        const rem = 59 - sec;
+        
         document.getElementById('timer').innerText = `00:${rem < 10 ? '0'+rem : rem}`;
         
         const yr = now.getFullYear();
         const mt = String(now.getMonth()+1).padStart(2,'0');
         const dy = String(now.getDate()).padStart(2,'0');
-        const mins = now.getHours() * 60 + now.getMinutes();
-        const pId = `${yr}${mt}${dy}1000${10001 + mins}`;
-        document.getElementById('period-num').innerText = pId;
+        
+        const totalMinutes = now.getHours() * 60 + now.getMinutes();
+        const activePeriod = `${yr}${mt}${dy}0${String(totalMinutes + 1).padStart(4, '0')}`;
+        
+        if(currentPeriodGlobal !== activePeriod) {
+            currentPeriodGlobal = activePeriod;
+            document.getElementById('period-num').innerText = activePeriod;
+            
+            const prevPeriod = `${yr}${mt}${dy}0${String(totalMinutes).padStart(4, '0')}`;
+            const actualNum = Math.floor(Math.random()*10);
+            const actualSize = actualNum >= 5 ? "BIG" : "SMALL";
+            
+            if(gameHistory.length > 0 && gameHistory[0].p !== prevPeriod) {
+                gameHistory.unshift({
+                    p: prevPeriod,
+                    n: actualNum,
+                    s: actualSize
+                });
+                if(gameHistory.length > 200) gameHistory.pop();
+            }
 
-        if(sec === 0) {
-            mLevel = Math.random() > 0.8 ? (mLevel < 5 ? mLevel + 1 : 1) : 1;
-            document.getElementById('level-val').innerText = `L${mLevel}`;
-            document.getElementById('mult-val').innerText = `${Math.pow(3, mLevel-1)}x`;
-            refreshData();
+            if(lastGeneratedPrediction && lastGeneratedPrediction.p === prevPeriod) {
+                const isWin = (lastGeneratedPrediction.s === actualSize);
+                myHistory.unshift({
+                    p: prevPeriod,
+                    pred: lastGeneratedPrediction.s,
+                    res: actualSize,
+                    w: isWin
+                });
+                if(myHistory.length > 200) myHistory.pop();
+            }
+            
+            renderCurrentTable();
+            renderTrend();
+            updateOverdue();
+            
+            martLevel = Math.random() > 0.7 ? (martLevel < 6 ? martLevel + 1 : 1) : 1;
+            document.getElementById('m-level').innerText = `L${martLevel}`;
+            document.getElementById('m-mult').innerText = `${Math.pow(3, martLevel-1)}x`;
+            generatePrediction();
         }
     }
 
-    function refreshData() {
+    function generatePrediction() {
         const isBig = Math.random() > 0.5;
+        const predSize = isBig ? "BIG" : "SMALL";
         const n1 = isBig ? Math.floor(Math.random()*5)+5 : Math.floor(Math.random()*5);
         const n2 = (n1 + 2) % 10;
         
         const sig = document.getElementById('signal-text');
-        sig.innerText = isBig ? "BIG" : "SMALL";
-        sig.className = isBig ? "signal-big" : "signal-small";
+        sig.innerText = predSize;
+        sig.className = isBig ? "sig-big" : "sig-small";
         
-        document.getElementById('circle-group').innerHTML = `
+        document.getElementById('circles').innerHTML = `
             <div class="circle ${getNumInfo(n1).class}">${n1}</div>
             <div class="circle ${getNumInfo(n2).class}">${n2}</div>
         `;
+
+        if(currentPeriodGlobal) {
+            lastGeneratedPrediction = {
+                p: currentPeriodGlobal,
+                s: predSize
+            };
+        }
     }
 
-    function initHistory() {
-        const base = 20260516100010590;
-        for(let i=0; i<200; i++) {
+    function initGameHistory() {
+        gameHistory = [];
+        const now = new Date();
+        const yr = now.getFullYear();
+        const mt = String(now.getMonth()+1).padStart(2,'0');
+        const dy = String(now.getDate()).padStart(2,'0');
+        const totalMinutes = now.getHours() * 60 + now.getMinutes();
+        
+        for(let i=1; i<=200; i++) {
+            const pMinutes = totalMinutes - i + 1;
+            if (pMinutes < 0) continue;
+            
+            const pId = `${yr}${mt}${dy}0${String(pMinutes).padStart(4, '0')}`;
             const n = Math.floor(Math.random()*10);
-            historyData.push({
-                p: base - i,
+            gameHistory.push({
+                p: pId,
                 n: n,
-                s: n >= 5 ? "BIG" : "SMALL",
-                w: Math.random() > 0.3
+                s: n >= 5 ? "BIG" : "SMALL"
             });
         }
-        renderHistory();
+        renderCurrentTable();
         renderTrend();
     }
 
     function renderTrend() {
-        const list = document.getElementById('trend-list');
-        list.innerHTML = historyData.slice(0, 15).map(h => `
+        document.getElementById('trend-list').innerHTML = gameHistory.slice(0, 15).map(h => `
             <div class="dot" style="background:${h.s==='BIG'?'var(--yellow)':'var(--blue)'}">${h.s[0]}</div>
         `).reverse().join('');
     }
 
-    function renderHistory() {
+    function switchTab(tabName) {
+        currentTab = tabName;
+        currentPage = 1;
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        
+        renderCurrentTable();
+    }
+
+    function renderCurrentTable() {
+        const listBody = document.getElementById('history-list');
+        const tableHead = document.getElementById('table-head');
         const start = (currentPage - 1) * 10;
-        const items = historyData.slice(start, start + 10);
-        document.getElementById('history-body').innerHTML = items.map(h => {
-            const info = getNumInfo(h.n);
-            return `<tr>
-                <td style="color:#666">${h.p}</td>
-                <td class="${info.txt}">${info.label}</td>
-                <td style="color:${h.s==='BIG'?'var(--yellow)':'var(--blue)'}; font-weight:bold">${h.s}</td>
-                <td class="${info.txt}" style="font-weight:bold">${h.n}</td>
-                <td class="${h.w?'win':'loss'}">${h.w?'WIN':'LOSS'}</td>
+        
+        if (currentTab === 'game') {
+            tableHead.innerHTML = `<tr>
+                <th>Period</th><th>Color</th><th>Size</th><th>Num</th>
             </tr>`;
-        }).join('');
-        document.getElementById('page-info').innerText = `Page ${currentPage}/20`;
+            const items = gameHistory.slice(start, start + 10);
+            listBody.innerHTML = items.map(h => {
+                const info = getNumInfo(h.n);
+                return `<tr>
+                    <td style="color:#71717a; font-family:'Orbitron', sans-serif; font-size:10.5px;">${h.p}</td>
+                    <td class="${info.txt}">${info.label}</td>
+                    <td style="color:${h.s==='BIG'?'var(--yellow)':'var(--blue)'}; font-weight:700">${h.s}</td>
+                    <td class="${info.txt}" style="font-weight:700; font-family:'Orbitron', sans-serif;">${h.n}</td>
+                </tr>`;
+            }).join('');
+            document.getElementById('page-info').innerText = `Page ${currentPage} / ${Math.max(1, Math.ceil(gameHistory.length/10))}`;
+        } 
+        else if (currentTab === 'my') {
+            tableHead.innerHTML = `<tr>
+                <th>Period</th><th>Prediction</th><th>Result</th><th>Status</th>
+            </tr>`;
+            const items = myHistory.slice(start, start + 10);
+            listBody.innerHTML = items.length === 0 ? `<tr><td colspan="4" style="color:#3f3f46; padding:28px; font-family:'Orbitron', sans-serif; font-size:10px; letter-spacing:0.5px;">TERMINAL DATA LOADING...</td></tr>` : items.map(h => `<tr>
+                <td style="color:#71717a; font-family:'Orbitron', sans-serif; font-size:10.5px;">${h.p}</td>
+                <td style="color:${h.pred==='BIG'?'var(--yellow)':'var(--blue)'}; font-weight:700">${h.pred}</td>
+                <td style="color:#fff; font-weight:700">${h.res}</td>
+                <td style="color:${h.w?'var(--green)':'var(--red)'}; font-weight:900; text-shadow: ${h.w ? '0 0 10px rgba(0,255,102,0.15)' : '0 0 10px rgba(255,45,85,0.15)'}">${h.w?'WIN':'LOSS'}</td>
+            </tr>`).join('');
+            document.getElementById('page-info').innerText = `Page ${currentPage} / ${Math.max(1, Math.ceil(myHistory.length/10))}`;
+        }
     }
 
     function updateOverdue() {
-        const r1 = document.getElementById('ov-row-1');
-        const r2 = document.getElementById('ov-row-2');
-        r1.innerHTML = ''; r2.innerHTML = '';
+        const grid = document.getElementById('overdue-grid');
+        grid.innerHTML = '';
         for(let i=0; i<10; i++) {
-            const html = `<div class="ov-card glass">
+            grid.innerHTML += `<div class="ov-card glass">
                 <div class="ov-num ${getNumInfo(i).txt}">${i}</div>
-                <div class="ov-miss">Miss ${Math.floor(Math.random()*18)}</div>
+                <div style="font-size:8px; color:#44444f; font-weight:700">MISS ${Math.floor(Math.random()*18)}</div>
             </div>`;
-            if(i < 5) r1.innerHTML += html; else r2.innerHTML += html;
         }
     }
 
     function changePage(d) {
         currentPage += d;
         if(currentPage < 1) currentPage = 1;
-        if(currentPage > 20) currentPage = 20;
-        renderHistory();
+        
+        let maxPage = 20;
+        if(currentTab === 'my') maxPage = Math.max(1, Math.ceil(myHistory.length/10));
+        
+        if(currentPage > maxPage) currentPage = maxPage;
+        renderCurrentTable();
     }
 </script>
 </body>
