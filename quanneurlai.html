@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OBSIDIAN NEURAL ENGINE V26+</title>
+    <!-- FontAwesome 6 CDN for modern crisp icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold-glow: #ffb703;
+            --cyan-ice: #00f5d4;
+            --magenta-neon: #f72585;
+            --green-neon: #38b000;
+            --red-neon: #d90429;
+            --violet-neon: #7209b7;
+            --orange-jackpot: #fb8500;
+            --grey-loss: #6c757d;
+            --bg-deep: #030408;
+            --card-glass: rgba(18, 22, 38, 0.85);
+            --border-neon: rgba(0, 245, 212, 0.25);
+            --blur-val: blur(25px);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            width: 100%; height: 100%;
+            background-color: var(--bg-deep);
+            color: #ffffff;
+            font-family: 'Ubuntu', sans-serif;
+            overflow-x: hidden;
+        }
+        body {
+            background: radial-gradient(circle at 50% 10%, rgba(114, 9, 183, 0.25) 0%, rgba(3, 4, 8, 1) 75%),
+                        radial-gradient(circle at 10% 90%, rgba(0, 245, 212, 0.12) 0%, transparent 50%);
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+        
+        /* Popup Banner */
+        .res-popup {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            width: 88%; max-width: 380px; padding: 12px 18px; border-radius: 20px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700;
+            text-align: center; text-transform: uppercase; letter-spacing: 1.5px;
+            z-index: 10000; box-shadow: 0 10px 35px rgba(0,0,0,0.9);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; pointer-events: none;
+        }
+        .res-popup.show { top: 15px; opacity: 1; pointer-events: auto; }
+        .popup-jackpot { background: linear-gradient(135deg, var(--orange-jackpot), #d45100); color: #fff; box-shadow: 0 0 25px var(--orange-jackpot); }
+        .popup-win { background: linear-gradient(135deg, var(--green-neon), #007200); color: #fff; box-shadow: 0 0 25px var(--green-neon); }
+        .popup-loss { background: linear-gradient(135deg, var(--grey-loss), #2b2d42); color: #fff; box-shadow: 0 0 15px var(--grey-loss); }
+        
+        /* Typography Rules */
+        .txt-big { color: var(--gold-glow) !important; font-weight: 700; text-shadow: 0 0 10px rgba(255, 183, 3, 0.5); }
+        .txt-small { color: var(--cyan-ice) !important; font-weight: 700; text-shadow: 0 0 10px rgba(0, 245, 212, 0.5); }
+        .num-odd { color: var(--green-neon); font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+        .num-even { color: var(--red-neon); font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+        .num-0 {
+            background: linear-gradient(180deg, var(--red-neon) 50%, var(--violet-neon) 50%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-family: 'Space Grotesk', sans-serif;
+        }
+        .num-5 {
+            background: linear-gradient(180deg, var(--green-neon) 50%, var(--violet-neon) 50%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        /* App Header Section */
+        .app-header {
+            text-align: center; padding: 22px 15px 8px;
+            width: 100%; max-width: 440px;
+        }
+        .hud-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 14px; border-radius: 30px;
+            background: rgba(114, 9, 183, 0.2); border: 1px solid rgba(114, 9, 183, 0.5);
+            color: var(--cyan-ice); font-size: 11px; font-weight: 700;
+            letter-spacing: 2px; margin-bottom: 8px;
+        }
+        .brand-title {
+            font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 800;
+            letter-spacing: 3px; line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff 20%, var(--cyan-ice) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+        .brand-subtitle {
+            font-size: 12px; font-weight: 500; color: #a3a9be;
+            letter-spacing: 1.5px; margin-top: 6px; text-transform: uppercase;
+        }
+        
+        /* User Profile Ribbon */
+        .user-ribbon {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px; padding: 8px 14px; margin-bottom: 12px;
+            font-size: 12px; font-weight: 600;
+        }
+        .user-ribbon .user-name { color: var(--cyan-ice); font-weight: 700; }
+        .logout-link { color: var(--magenta-neon); cursor: pointer; text-decoration: none; font-size: 11px; }
+
+        /* Main Panel Layout */
+        .main-panel {
+            width: 94%; max-width: 440px; margin: 10px auto 20px;
+            background: var(--card-glass); border: 1px solid var(--border-neon);
+            border-radius: 24px; padding: 16px;
+            backdrop-filter: var(--blur-val); -webkit-backdrop-filter: var(--blur-val);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            transition: border 0.3s ease;
+        }
+        .main-panel.locked-mode {
+            border: 1px solid var(--red-neon);
+            box-shadow: 0 0 20px rgba(217, 4, 41, 0.3);
+        }
+        .hud-timer-bar {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; padding: 10px 14px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px;
+        }
+        .period-info .p-label { font-size: 10px; color: #8e94a7; text-transform: uppercase; letter-spacing: 1px; }
+        .period-info .p-val { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: #fff; }
+        .timer-display { text-align: right; }
+        .timer-display .t-label { font-size: 10px; color: #8e94a7; text-transform: uppercase; letter-spacing: 1px; }
+        .timer-display .t-val {
+            font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700;
+            color: var(--cyan-ice); text-shadow: 0 0 10px rgba(0, 245, 212, 0.4);
+        }
+        .timer-display .t-val.pulse { color: var(--red-neon); text-shadow: 0 0 12px var(--red-neon); }
+        
+        .hud-prediction-box {
+            background: radial-gradient(circle at center, rgba(0,0,0,0.6) 0%, rgba(10,12,22,0.9) 100%);
+            border-radius: 18px; padding: 16px; border: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 12px; text-align: center; position: relative; overflow: hidden;
+        }
+        .pred-inline-layout {
+            display: flex; align-items: center; justify-content: center; gap: 16px;
+        }
+        .pred-size-badge {
+            font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+        .pred-numbers-box {
+            display: flex; align-items: center; gap: 10px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700;
+            background: rgba(255,255,255,0.04); padding: 6px 14px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .lock-indicator {
+            display: none; position: absolute; inset: 0;
+            background: rgba(5, 7, 15, 0.92); backdrop-filter: blur(4px);
+            align-items: center; justify-content: center; gap: 8px;
+            color: var(--red-neon); font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px; font-weight: 700; letter-spacing: 2px;
+            border-radius: 18px; text-transform: uppercase;
+        }
+        .lock-indicator.active { display: flex; }
+        
+        .confidence-bar {
+            margin-top: 10px; height: 6px;
+            background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;
+        }
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan-ice), var(--green-neon));
+            border-radius: 10px; transition: width 0.4s ease;
+        }
+        .confidence-text { font-size: 11px; color: #a3a9be; margin-top: 4px; }
+        
+        .pattern-card {
+            background: rgba(114, 9, 183, 0.12); border: 1px solid rgba(114, 9, 183, 0.35);
+            border-radius: 10px; padding: 8px 12px; margin-bottom: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .pattern-lbl { font-size: 10px; color: #a3a9be; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+        .pattern-val { font-family: 'Ubuntu', sans-serif; font-size: 12px; font-weight: 700; color: var(--cyan-ice); }
+        
+        /* Stats Colorful Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+        .stat-box {
+            border-radius: 12px; padding: 10px 4px; text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.08); transition: transform 0.2s;
+        }
+        .stat-box:hover { transform: translateY(-2px); }
+        .stat-box.win-box { background: rgba(56, 176, 0, 0.08); border-color: rgba(56, 176, 0, 0.3); }
+        .stat-box.loss-box { background: rgba(217, 4, 41, 0.08); border-color: rgba(217, 4, 41, 0.3); }
+        .stat-box.streak-box { background: rgba(0, 245, 212, 0.08); border-color: rgba(0, 245, 212, 0.3); }
+        .stat-box.rate-box { background: rgba(255, 183, 3, 0.08); border-color: rgba(255, 183, 3, 0.3); }
+
+        .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; margin-top: 2px; }
+        .stat-lbl { font-size: 9px; color: #a3a9be; text-transform: uppercase; margin-top: 3px; font-weight: 700; letter-spacing: 0.5px; }
+        .c-win { color: var(--green-neon); }
+        .c-loss { color: var(--red-neon); }
+        .c-streak { color: var(--cyan-ice); }
+        .c-rate { color: var(--gold-glow); }
+        
+        .recent-bar {
+            display: flex; gap: 4px; margin-bottom: 12px; justify-content: center; flex-wrap: wrap;
+        }
+        .recent-dot {
+            width: 18px; height: 18px; border-radius: 50%;
+            font-size: 9px; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #fff;
+        }
+        .dot-big { background: var(--gold-glow); color: #000; }
+        .dot-small { background: var(--cyan-ice); color: #000; }
+        
+        /* Control Buttons */
+        .controls {
+            display: flex; gap: 8px; margin-bottom: 12px; justify-content: center;
+        }
+        .ctrl-btn {
+            padding: 8px 14px; border-radius: 20px; border: none;
+            color: #fff; font-size: 11px; cursor: pointer; font-weight: 700;
+            display: inline-flex; align-items: center; gap: 6px;
+            transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .ctrl-btn:active { transform: scale(0.95); }
+        .btn-sound { background: linear-gradient(135deg, #7209b7, #f72585); }
+        .btn-refresh { background: linear-gradient(135deg, #00f5d4, #007200); color: #000; }
+        .btn-clear { background: linear-gradient(135deg, #d90429, #6c757d); }
+
+        .history-container {
+            border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);
+            position: relative; background: rgba(0,0,0,0.3); overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
+        th {
+            background: #090c18; color: var(--cyan-ice);
+            padding: 10px 4px; font-family: 'Ubuntu', sans-serif; font-size: 10px; font-weight: 700;
+            border-bottom: 2px solid rgba(0, 245, 212, 0.3); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        td {
+            padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-weight: 500; vertical-align: middle; font-size: 11px;
+        }
+        .period-cell { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: #d0d5e5; font-weight: 700; }
+        .lvl-badge { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 700; color: #ffb703; }
+        .row-win { background: rgba(56, 176, 0, 0.05); }
+        .row-loss { background: rgba(108, 117, 125, 0.08); }
+        .row-jackpot { background: rgba(251, 133, 0, 0.15); }
+        .pill { padding: 3px 7px; border-radius: 6px; font-size: 8px; font-weight: 700; text-transform: uppercase; display: inline-block; font-family: 'Ubuntu', sans-serif; }
+        .pill-win { background: var(--green-neon); color: #fff; box-shadow: 0 0 6px rgba(56, 176, 0, 0.4); }
+        .pill-loss { background: var(--grey-loss); color: #fff; }
+        .pill-jackpot { background: var(--orange-jackpot); color: #fff; box-shadow: 0 0 8px var(--orange-jackpot); }
+
+        /* Pagination Bar */
+        .pagination-container {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 10px; padding: 6px 4px; font-size: 11px; color: #a3a9be;
+        }
+        .page-btn {
+            padding: 6px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05); color: #fff; font-size: 11px;
+            font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+            transition: background 0.2s;
+        }
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .page-btn:not(:disabled):hover { background: rgba(0, 245, 212, 0.15); border-color: var(--cyan-ice); }
+        .page-info { font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--cyan-ice); }
+
+        .footer-tag { text-align: center; font-size: 10px; color: #5a6078; letter-spacing: 2px; margin-top: 15px; margin-bottom: 15px; font-weight: 500; }
+        
+        /* Modern Login Overlay */
+        #login-screen {
+            position: fixed; inset: 0;
+            background: rgba(3, 4, 8, 0.96);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 99999; backdrop-filter: blur(18px);
+            transition: opacity 0.4s ease;
+        }
+        .login-card {
+            width: 88%; max-width: 320px; padding: 26px 20px;
+            border-radius: 20px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-neon); text-align: center;
+            box-shadow: 0 0 35px rgba(0, 245, 212, 0.15);
+            font-family: 'Ubuntu', sans-serif;
+        }
+        .login-card .logo-circle {
+            width: 60px; height: 60px; margin: 0 auto 12px; border-radius: 50%;
+            background: #000; display: flex; align-items: center; justify-content: center;
+            font-size: 26px; color: var(--cyan-ice);
+            border: 2px solid var(--cyan-ice);
+            box-shadow: 0 0 18px rgba(0,245,212,0.4);
+        }
+        .login-card h2 { font-family: 'Space Grotesk', sans-serif; color: #fff; font-size: 20px; margin-bottom: 6px; }
+        .login-card p { color: #8e94a7; font-size: 12px; margin-bottom: 20px; }
+        
+        .login-input-group { position: relative; margin-bottom: 16px; }
+        .login-input-group i {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--cyan-ice); font-size: 14px;
+        }
+        .login-input {
+            width: 100%; padding: 12px 12px 12px 40px;
+            border-radius: 25px; border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05); color: #fff; font-size: 13px;
+            outline: none; font-family: 'Ubuntu', sans-serif; transition: border-color 0.3s;
+        }
+        .login-input:focus { border-color: var(--cyan-ice); }
+        .login-submit-btn {
+            width: 100%; padding: 12px; border-radius: 25px; border: none;
+            background: linear-gradient(135deg, var(--cyan-ice), var(--violet-neon));
+            color: #000; font-weight: 700; font-size: 13px; cursor: pointer;
+            box-shadow: 0 0 15px rgba(0,245,212,0.3); transition: transform 0.2s;
+        }
+        .login-submit-btn:active { transform: scale(0.97); }
+        .fade-out { opacity: 0; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div id="resPopup" class="res-popup">SYSTEM READY</div>
+
+    <header class="app-header">
+        <div class="hud-tag"><i class="fa-solid fa-microchip"></i> OBSIDIAN CORE</div>
+        <div class="brand-title">QUANTUM NEURAL V26+</div>
+        <div class="brand-subtitle">AI Driven High Accuracy Predictions</div>
+    </header>
+
+    <main class="main-panel" id="mainPanel">
+        <div class="user-ribbon">
+            <div><i class="fa-solid fa-user-gear"></i> User: <span class="user-name" id="displayUsername">Guest</span></div>
+            <div class="logout-link" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Switch</div>
+        </div>
+
+        <div class="hud-timer-bar">
+            <div class="period-info">
+                <div class="p-label">Active Period</div>
+                <div class="p-val" id="pID">----</div>
+            </div>
+            <div class="timer-display">
+                <div class="t-label">Time Remaining</div>
+                <div class="t-val" id="countdownClock">00:30</div>
+            </div>
+        </div>
+
+        <div class="hud-prediction-box" id="predBox">
+            <div class="lock-indicator" id="lockBanner">
+                <i class="fa-solid fa-lock"></i> LOCKDOWN // EVALUATING
+            </div>
+            <div class="pred-inline-layout">
+                <div class="pred-size-badge" id="pRes">---</div>
+                <div class="pred-numbers-box" id="pNumbers">
+                    <span>-</span><span>-</span><span>-</span>
+                </div>
+            </div>
+            <div class="confidence-bar"><div class="confidence-fill" id="confFill" style="width: 50%"></div></div>
+            <div class="confidence-text" id="confText">Confidence: --%</div>
+        </div>
+
+        <div class="pattern-card">
+            <div class="pattern-lbl"><i class="fa-solid fa-chart-line"></i> Active Pattern</div>
+            <div class="pattern-val" id="pPattern">SYNCING MATRIX...</div>
+        </div>
+
+        <div class="recent-bar" id="recentBar"></div>
+
+        <div class="stats-grid">
+            <div class="stat-box win-box">
+                <i class="fa-solid fa-trophy c-win"></i>
+                <div class="stat-num c-win" id="winCounter">0</div>
+                <div class="stat-lbl">Wins</div>
+            </div>
+            <div class="stat-box loss-box">
+                <i class="fa-solid fa-circle-xmark c-loss"></i>
+                <div class="stat-num c-loss" id="lossCounter">0</div>
+                <div class="stat-lbl">Losses</div>
+            </div>
+            <div class="stat-box streak-box">
+                <i class="fa-solid fa-bolt c-streak"></i>
+                <div class="stat-num c-streak" id="streakCounter">0</div>
+                <div class="stat-lbl">Streak</div>
+            </div>
+            <div class="stat-box rate-box">
+                <i class="fa-solid fa-percent c-rate"></i>
+                <div class="stat-num c-rate" id="winRate">0%</div>
+                <div class="stat-lbl">Accuracy</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="ctrl-btn btn-sound" onclick="toggleSound()">
+                <i class="fa-solid fa-volume-high" id="soundIcon"></i> Sound
+            </button>
+            <button class="ctrl-btn btn-refresh" onclick="manualRefresh()">
+                <i class="fa-solid fa-rotate-right"></i> Sync
+            </button>
+            <button class="ctrl-btn btn-clear" onclick="clearHistory()">
+                <i class="fa-solid fa-trash-can"></i> Clear
+            </button>
+        </div>
+
+        <!-- History Table Section -->
+        <div class="history-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Period</th>
+                        <th>Prediction</th>
+                        <th>Lv.</th>
+                        <th>Actual</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="logs"></tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls (10 Entries Per Page) -->
+        <div class="pagination-container">
+            <button class="page-btn" id="prevBtn" onclick="prevPage()"><i class="fa-solid fa-angle-left"></i> Prev</button>
+            <div class="page-info" id="pageIndicator">Page 1 of 1</div>
+            <button class="page-btn" id="nextBtn" onclick="nextPage()">Next <i class="fa-solid fa-angle-right"></i></button>
+        </div>
+    </main>
+
+    <div class="footer-tag">ENCRYPTED VIP SCRIPT • ADVANCED NEURAL</div>
+
+<script>
+    const BIG_POOL = [5, 6, 7, 8, 9];
+    const SMALL_POOL = [0, 1, 2, 3, 4];
+    const MAX_HISTORY_LIMIT = 2000;
+    const ITEMS_PER_PAGE = 10;
+   
+    let lastId = null, savedPrediction = null, targetNumbers = [];
+    let serverBuffer = [];
+    let currentLevel = 1;
+    let isBlocked = false;
+    let totalWins = 0, totalLosses = 0, currentStreak = 0, streakType = "WIN";
+    let audioCtx = null;
+    let soundEnabled = true;
+    let confidence = 50;
+    let username = "Guest";
+
+    // Persistent History Records
+    let persistentLogs = [];
+    let currentPage = 1;
+
+    // Authentication Logic
+    function checkAuth() {
+        const savedUser = localStorage.getItem('obsidian_user');
+        if (savedUser) {
+            username = savedUser;
+            document.getElementById('displayUsername').innerText = username;
+            document.getElementById('login-screen').style.display = 'none';
+        } else {
+            document.getElementById('login-screen').style.display = 'flex';
+        }
+    }
+
+    function handleLogin(e) {
+        if(e) e.preventDefault();
+        const input = document.getElementById('usernameInput').value.trim();
+        if (input) {
+            username = input;
+            localStorage.setItem('obsidian_user', username);
+            document.getElementById('displayUsername').innerText = username;
+            const splash = document.getElementById("login-screen");
+            splash.classList.add("fade-out");
+            setTimeout(() => { splash.style.display = "none"; }, 400);
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('obsidian_user');
+        document.getElementById('usernameInput').value = '';
+        document.getElementById('login-screen').classList.remove("fade-out");
+        document.getElementById('login-screen').style.display = 'flex';
+    }
+
+    function loadStats() {
+        try {
+            const s = JSON.parse(localStorage.getItem('obsidian_stats') || '{}');
+            totalWins = Number(s.wins) || 0;
+            totalLosses = Number(s.losses) || 0;
+            currentStreak = Number(s.streak) || 0;
+            streakType = s.streakType || "WIN";
+            currentLevel = Number(s.level) || 1;
+            soundEnabled = s.sound !== false;
+            
+            // Load persistent history
+            persistentLogs = JSON.parse(localStorage.getItem('obsidian_history_records') || '[]');
+        } catch(e) {}
+        updateStatsDashboard();
+        renderTablePage();
+    }
+    
+    function saveStats() {
+        try {
+            localStorage.setItem('obsidian_stats', JSON.stringify({
+                wins: totalWins, losses: totalLosses,
+                streak: currentStreak, streakType, level: currentLevel, sound: soundEnabled
+            }));
+            
+            // Save up to 2000 entries
+            localStorage.setItem('obsidian_history_records', JSON.stringify(persistentLogs.slice(0, MAX_HISTORY_LIMIT)));
+        } catch(e) {}
+    }
+
+    function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } }
+    
+    function playSound(type) {
+        if (!soundEnabled) return;
+        try {
+            initAudio(); if (!audioCtx) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
+            if (type === 'WIN') {
+                osc.frequency.setValueAtTime(587.33, now); osc.frequency.setValueAtTime(880, now + 0.08); gain.gain.setValueAtTime(0.04, now);
+                osc.start(now); osc.stop(now + 0.18);
+            } else if (type === 'LOSS') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(160, now); osc.frequency.linearRampToValueAtTime(100, now + 0.12); gain.gain.setValueAtTime(0.05, now);
+                osc.start(now); osc.stop(now + 0.18);
+            }
+        } catch(e) {}
+    }
+    
+    function showResultBanner(type, message) {
+        const popup = document.getElementById('resPopup');
+        popup.className = "res-popup show popup-" + type.toLowerCase();
+        popup.innerText = message;
+        setTimeout(() => { popup.classList.remove('show'); }, 2200);
+    }
+    
+    function formatNumberHTML(num) {
+        if (num === 0) return `<span class="num-0">0</span>`;
+        if (num === 5) return `<span class="num-5">5</span>`;
+        if (num % 2 !== 0) return `<span class="num-odd">${num}</span>`;
+        return `<span class="num-even">${num}</span>`;
+    }
+    
+    function formatSizeHTML(size) {
+        if (size === "BIG") return `<span class="txt-big">BIG</span>`;
+        return `<span class="txt-small">SMALL</span>`;
+    }
+
+    function processDynamicPrediction(buffer) {
+        let stream = buffer.length >= 6 ? buffer : [8, 2, 5, 9, 1, 4, 7];
+        let last6 = stream.slice(-6);
+       
+        let bigCount = last6.filter(n => n >= 5).length;
+        let smallCount = 6 - bigCount;
+       
+        let detectedPattern = "NEURAL BALANCED";
+        let predictedTrend = "BIG";
+        confidence = 55;
+
+        if (bigCount >= 5) {
+            detectedPattern = "STRONG DRAGON BIG";
+            predictedTrend = "BIG";
+            confidence = 72;
+        } else if (smallCount >= 5) {
+            detectedPattern = "STRONG DRAGON SMALL";
+            predictedTrend = "SMALL";
+            confidence = 72;
+        } else if (bigCount >= 4) {
+            detectedPattern = "DRAGON BIG TREND";
+            predictedTrend = "BIG";
+            confidence = 63;
+        } else if (smallCount >= 4) {
+            detectedPattern = "DRAGON SMALL TREND";
+            predictedTrend = "SMALL";
+            confidence = 63;
+        } else {
+            let altCheck = true;
+            for (let i = 0; i < last6.length - 1; i++) {
+                if ((last6[i] >= 5 && last6[i+1] >= 5) || (last6[i] < 5 && last6[i+1] < 5)) {
+                    altCheck = false; break;
+                }
+            }
+            if (altCheck) {
+                detectedPattern = "ALTERNATE ZIG-ZAG";
+                predictedTrend = (last6[last6.length - 1] >= 5) ? "SMALL" : "BIG";
+                confidence = 58;
+            } else {
+                detectedPattern = "2-2 REPEAT SYMMETRY";
+                predictedTrend = (last6[last6.length - 1] >= 5) ? "BIG" : "SMALL";
+                confidence = 52;
+            }
+        }
+        if (currentLevel === 3) {
+            predictedTrend = (predictedTrend === "BIG") ? "SMALL" : "BIG";
+            detectedPattern = "LV.3 SAFETY REVERSAL";
+            confidence = Math.max(45, confidence - 12);
+        }
+        let pool = (predictedTrend === "BIG") ? [...BIG_POOL] : [...SMALL_POOL];
+        pool.sort(() => Math.random() - 0.5);
+        let selectedNumbers = pool.slice(0, 3).sort((a,b) => a - b);
+        return {
+            trend: predictedTrend,
+            numbers: selectedNumbers,
+            pattern: detectedPattern,
+            conf: confidence
+        };
+    }
+
+    function updateStatsDashboard() {
+        document.getElementById('winCounter').innerText = totalWins;
+        document.getElementById('lossCounter').innerText = totalLosses;
+        document.getElementById('streakCounter').innerText = `${currentStreak} ${streakType}`;
+        const total = totalWins + totalLosses;
+        const rate = total > 0 ? Math.round((totalWins / total) * 100) : 0;
+        document.getElementById('winRate').innerText = rate + "%";
+        saveStats();
+    }
+
+    function updateRecentBar() {
+        const bar = document.getElementById('recentBar');
+        bar.innerHTML = '';
+        const last10 = serverBuffer.slice(-10);
+        last10.forEach(n => {
+            const d = document.createElement('div');
+            d.className = 'recent-dot ' + (n >= 5 ? 'dot-big' : 'dot-small');
+            d.textContent = n;
+            bar.appendChild(d);
+        });
+    }
+
+    // Pagination Functions
+    function renderTablePage() {
+        const tableBody = document.getElementById('logs');
+        tableBody.innerHTML = '';
+
+        const totalPages = Math.max(1, Math.ceil(persistentLogs.length / ITEMS_PER_PAGE));
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        const pageItems = persistentLogs.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+        pageItems.forEach(item => {
+            let rowHtml = `<tr class="${item.rowStyle}">
+                <td class="period-cell">${item.period}</td>
+                <td>${item.predHTML}</td>
+                <td class="lvl-badge">${item.level}</td>
+                <td>${item.actualHTML}</td>
+                <td>${item.badge}</td>
+            </tr>`;
+            tableBody.insertAdjacentHTML('beforeend', rowHtml);
+        });
+
+        document.getElementById('pageIndicator').innerText = `Page ${currentPage} of ${totalPages}`;
+        document.getElementById('prevBtn').disabled = (currentPage === 1);
+        document.getElementById('nextBtn').disabled = (currentPage >= totalPages);
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTablePage();
+        }
+    }
+
+    function nextPage() {
+        const totalPages = Math.ceil(persistentLogs.length / ITEMS_PER_PAGE);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderTablePage();
+        }
+    }
+
+    function start30sClock() {
+        setInterval(() => {
+            let remaining = 30 - (new Date().getSeconds() % 30);
+            const timer = document.getElementById('countdownClock');
+            const mainPanel = document.getElementById('mainPanel');
+            const lockBanner = document.getElementById('lockBanner');
+           
+            timer.innerText = "00:" + (remaining < 10 ? "0" : "") + remaining;
+           
+            if (remaining <= 6) {
+                timer.classList.add('pulse');
+                mainPanel.classList.add('locked-mode');
+                lockBanner.classList.add('active');
+                isBlocked = true;
+            } else {
+                timer.classList.remove('pulse');
+                mainPanel.classList.remove('locked-mode');
+                lockBanner.classList.remove('active');
+                isBlocked = false;
+            }
+        }, 1000);
+    }
+
+    async function fetchHistory() {
+        const res = await fetch('https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json?ts=' + Date.now());
+        if (!res.ok) throw new Error('API Error');
+        return await res.json();
+    }
+
+    async function executeQuantumPipelineSync() {
+        try {
+            const json = await fetchHistory();
+            if (!json || !json.data || !json.data.list) return;
+            let historyList = json.data.list;
+           
+            serverBuffer = historyList.slice(0, 15).map(item => parseInt(item.number)).reverse();
+            const currentRecord = historyList[0];
+            let currentPeriod = currentRecord.issueNumber;
+            let evaluation = processDynamicPrediction(serverBuffer);
+            savedPrediction = evaluation.trend;
+            targetNumbers = evaluation.numbers;
+            confidence = evaluation.conf;
+           
+            let nextPeriod = (BigInt(currentPeriod) + 1n).toString();
+            document.getElementById('pRes').innerHTML = formatSizeHTML(savedPrediction);
+            document.getElementById('pNumbers').innerHTML = targetNumbers.map(n => formatNumberHTML(n)).join(" ");
+            document.getElementById('pID').innerText = nextPeriod.slice(-5);
+            document.getElementById('pPattern').innerText = evaluation.pattern;
+            document.getElementById('confFill').style.width = confidence + "%";
+            document.getElementById('confText').innerText = `Confidence: ${confidence}%`;
+            updateRecentBar();
+            lastId = currentPeriod;
+        } catch(e) {
+            setTimeout(executeQuantumPipelineSync, 3000);
+        }
+    }
+
+    async function startContinuousLivePipeline() {
+        checkAuth();
+        loadStats();
+        start30sClock();
+        await executeQuantumPipelineSync();
+        setInterval(async () => {
+            try {
+                const json = await fetchHistory();
+                if (!json || !json.data || !json.data.list) return;
+                const currentRecord = json.data.list[0];
+               
+                let currentNum = parseInt(currentRecord.number);
+                let currentPeriod = currentRecord.issueNumber;
+                if(lastId !== currentPeriod) {
+                    if(lastId && savedPrediction !== null) {
+                        let actualBS = (currentNum >= 5) ? "BIG" : "SMALL";
+                        let isTrendWin = (actualBS === savedPrediction);
+                        let isNumWin = targetNumbers.includes(currentNum);
+                        let rowStyle = "row-loss", badge = `<span class="pill pill-loss">LOSS</span>`;
+                        let recordedLevel = `Lv.${currentLevel}`;
+                        
+                        if(isTrendWin && isNumWin) {
+                            rowStyle = "row-jackpot";
+                            badge = `<span class="pill pill-jackpot">JACKPOT</span>`;
+                            playSound('WIN');
+                            showResultBanner('JACKPOT', '🎰 JACKPOT WINNER!');
+                            totalWins++;
+                            currentLevel = 1;
+                            if(streakType === "WIN") { currentStreak++; } else { streakType = "WIN"; currentStreak = 1; }
+                        } else if(isTrendWin) {
+                            rowStyle = "row-win";
+                            badge = `<span class="pill pill-win">WIN</span>`;
+                            playSound('WIN');
+                            showResultBanner('WIN', '⚡ WINNER!');
+                            totalWins++;
+                            currentLevel = 1;
+                            if(streakType === "WIN") { currentStreak++; } else { streakType = "WIN"; currentStreak = 1; }
+                        } else {
+                            playSound('LOSS');
+                            showResultBanner('LOSS', '❌ LOSS');
+                            totalLosses++;
+                            if (currentLevel < 3) currentLevel++;
+                            else currentLevel = 1;
+                            if(streakType === "LOSS") { currentStreak++; } else { streakType = "LOSS"; currentStreak = 1; }
+                        }
+                       
+                        let nextPeriodForHistory = (BigInt(currentPeriod)).toString().slice(-5);
+                        let predHTML = `${formatSizeHTML(savedPrediction)} &nbsp;${targetNumbers.map(n=>formatNumberHTML(n)).join(" ")}`;
+                        let actualHTML = `${formatSizeHTML(actualBS)} &nbsp;${formatNumberHTML(currentNum)}`;
+                        
+                        // Push new entry to persistent history array (Unshift to top)
+                        persistentLogs.unshift({
+                            period: nextPeriodForHistory,
+                            predHTML: predHTML,
+                            level: recordedLevel,
+                            actualHTML: actualHTML,
+                            badge: badge,
+                            rowStyle: rowStyle
+                        });
+
+                        // Keep max 2000 entries
+                        if (persistentLogs.length > MAX_HISTORY_LIMIT) {
+                            persistentLogs.pop();
+                        }
+
+                        // Auto switch to page 1 to view recent result
+                        currentPage = 1;
+                        updateStatsDashboard();
+                        renderTablePage();
+                    }
+                    serverBuffer.push(currentNum);
+                    if(serverBuffer.length > 30) serverBuffer.shift();
+                    let evaluation = processDynamicPrediction(serverBuffer);
+                    savedPrediction = evaluation.trend;
+                    targetNumbers = evaluation.numbers;
+                    confidence = evaluation.conf;
+                   
+                    let nextPeriod = (BigInt(currentPeriod) + 1n).toString();
+                    document.getElementById('pRes').innerHTML = formatSizeHTML(savedPrediction);
+                    document.getElementById('pNumbers').innerHTML = targetNumbers.map(n => formatNumberHTML(n)).join(" ");
+                    document.getElementById('pID').innerText = nextPeriod.slice(-5);
+                    document.getElementById('pPattern').innerText = evaluation.pattern;
+                    document.getElementById('confFill').style.width = confidence + "%";
+                    document.getElementById('confText').innerText = `Confidence: ${confidence}%`;
+                    updateRecentBar();
+                    lastId = currentPeriod;
+                }
+            } catch(e) {}
+        }, 1200);
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        saveStats();
+        const icon = document.getElementById('soundIcon');
+        icon.className = soundEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark";
+    }
+    
+    function manualRefresh() {
+        executeQuantumPipelineSync();
+    }
+    
+    function clearHistory() {
+        if (confirm("Are you sure you want to clear all history (up to 2000 records) and statistics?")) {
+            persistentLogs = [];
+            localStorage.removeItem('obsidian_history_records');
+            totalWins = 0; totalLosses = 0; currentStreak = 0; streakType = "WIN"; currentLevel = 1;
+            currentPage = 1;
+            updateStatsDashboard();
+            renderTablePage();
+        }
+    }
+
+    window.onload = () => { startContinuousLivePipeline(); };
+</script>
+
+<!-- Simplified User Login Screen -->
+<div id="login-screen">
+    <div class="login-card">
+        <div class="logo-circle"><i class="fa-solid fa-user-shield"></i></div>
+        <h2>MEMBER ACCESS</h2>
+        <p>Enter your username to access neural predictions.</p>
+        <form onsubmit="handleLogin(event)">
+            <div class="login-input-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="usernameInput" class="login-input" placeholder="Enter Username" required autocomplete="off">
+            </div>
+            <button type="submit" class="login-submit-btn">Continue →</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
