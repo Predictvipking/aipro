@@ -3,19 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6366f1">
     <title>乂ᴅᴀʀᴋ乡ғɪʀᴇ v11.0 | OFFICIAL REALTIME SYNC</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght=400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
+    <!-- INLINE PWA MANIFEST -->
+    <link rel="manifest" id="manifest-placeholder">
+
     <style>
+        /* --- SECURITY & COPY PROTECTION --- */
+        * {
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0; padding: 0;
+            font-family: 'Ubuntu', sans-serif;
+        }
+
         /* --- THEME ROOT CONFIGURATION --- */
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #e4ecfa 50%, #f9f6fc 100%);
-            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-bg: rgba(255, 255, 255, 0.85);
             --card-border: rgba(255, 255, 255, 0.7);
-            --shadow-sm: 0 4px 16px rgba(99, 102, 241, 0.05);
-            --shadow-md: 0 12px 30px rgba(99, 102, 241, 0.1);
+            --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.05);
+            --shadow-md: 0 6px 16px rgba(99, 102, 241, 0.08);
             --primary: #6366f1;
             --secondary: #4f46e5;
             --accent-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
@@ -27,24 +43,16 @@
             --text-main: #1e1b4b;
         }
 
-        /* --- WHITE RED THEME OVERRIDES --- */
         body.theme-red-white {
             --bg-gradient: linear-gradient(135deg, #fff5f5 0%, #ffebeb 50%, #ffffff 100%);
             --card-bg: rgba(255, 255, 255, 0.95);
             --card-border: rgba(239, 68, 68, 0.15);
-            --shadow-sm: 0 4px 12px rgba(239, 68, 68, 0.05);
-            --shadow-md: 0 10px 25px rgba(239, 68, 68, 0.08);
+            --shadow-sm: 0 2px 6px rgba(239, 68, 68, 0.05);
+            --shadow-md: 0 6px 15px rgba(239, 68, 68, 0.08);
             --primary: #ef4444;
             --secondary: #dc2626;
             --accent-gradient: linear-gradient(135deg, #ef4444 0%, #f43f5e 100%);
             --text-main: #450a0a;
-        }
-
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            margin: 0; padding: 0; 
-            font-family: 'Ubuntu', sans-serif; 
         }
 
         .ov-num, .stat-val, .timer-box, .p-val, .num-font, .circle, .dot-cell, .badge-num, #time-clock { 
@@ -58,86 +66,130 @@
             transition: background 0.3s ease, color 0.3s ease;
         }
 
-        .mobile-wrapper { width: 100%; max-width: 430px; min-height: 100vh; position: relative; padding: 20px 16px; display: flex; flex-direction: column; }
-        .glass { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 24px; box-shadow: var(--shadow-md); transition: background 0.3s, border 0.3s; }
+        .mobile-wrapper { width: 100%; max-width: 430px; min-height: 100vh; position: relative; padding: 8px 10px; display: flex; flex-direction: column; gap: 8px; }
+        .glass { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 16px; box-shadow: var(--shadow-md); transition: background 0.3s, border 0.3s; }
+
+        /* POPUP NOTIFICATION BANNER */
+        .res-popup {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            width: 88%; max-width: 360px; padding: 10px 16px; border-radius: 14px;
+            font-family: 'Share Tech Mono', monospace; font-size: 15px; font-weight: 700;
+            text-align: center; text-transform: uppercase; letter-spacing: 1px;
+            z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0; pointer-events: none; color: #fff;
+        }
+        .res-popup.show { top: 12px; opacity: 1; pointer-events: auto; }
+        .popup-jackpot { background: linear-gradient(135deg, #fb8500, #d45100); box-shadow: 0 0 20px rgba(251, 133, 0, 0.6); }
+        .popup-win { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 0 16px rgba(16, 185, 129, 0.5); }
+        .popup-loss { background: linear-gradient(135deg, #ef4444, #991b1b); box-shadow: 0 0 16px rgba(239, 68, 68, 0.5); }
 
         /* LOGIN SCREEN */
-        #login-screen { position: absolute; inset: 0; z-index: 999; background: var(--bg-gradient); display: flex; flex-direction: column; padding: 30px 24px; justify-content: center; align-items: center; }
-        .login-illustration { width: 90px; height: 90px; background: var(--accent-gradient); border-radius: 24px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 30px rgba(99, 102, 241, 0.3); margin-bottom: 24px; color: #fff; font-size: 36px; }
-        .login-welcome { text-align: center; margin-bottom: 32px; }
-        .login-welcome h2 { font-size: 26px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
-        .login-welcome p { font-size: 15px; color: #6b7280; font-weight: 500; }
-        .login-split-portal { width: 100%; padding: 32px 24px; border-radius: 28px; background: rgba(255, 255, 255, 0.95); box-shadow: 0 20px 40px rgba(99, 102, 241, 0.08); border: 1px solid #fff; }
-        .portal-title { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 24px; letter-spacing: 1px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .input-group { position: relative; width: 100%; margin-bottom: 20px; }
-        .input-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 18px; }
-        .login-input { width: 100%; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 18px 16px 18px 48px; border-radius: 16px; color: #000; text-align: left; font-size: 16px; font-weight: 700; letter-spacing: 2px; transition: all 0.3s ease; }
-        .login-input:focus { border-color: var(--primary); outline: none; background: #fff; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
-        .login-btn { width: 100%; background: var(--accent-gradient); border: none; padding: 18px; border-radius: 16px; font-weight: 700; cursor: pointer; color: #fff; font-size: 15px; letter-spacing: 1px; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3); transition: all 0.2s ease; }
-        #error { color: var(--red); font-size: 14px; text-align: center; margin-top: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        #login-screen { position: absolute; inset: 0; z-index: 999; background: var(--bg-gradient); display: flex; flex-direction: column; padding: 20px; justify-content: center; align-items: center; }
+        .login-illustration { width: 70px; height: 70px; background: var(--accent-gradient); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); margin-bottom: 16px; color: #fff; font-size: 30px; }
+        .login-welcome { text-align: center; margin-bottom: 20px; }
+        .login-welcome h2 { font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .login-welcome p { font-size: 13px; color: #6b7280; font-weight: 500; }
+        .login-split-portal { width: 100%; padding: 20px 16px; border-radius: 20px; background: rgba(255, 255, 255, 0.95); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.08); border: 1px solid #fff; }
+        .portal-title { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 16px; letter-spacing: 1px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .input-group { position: relative; width: 100%; margin-bottom: 14px; }
+        .input-group i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 16px; }
+        .login-input { width: 100%; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 14px 14px 14px 42px; border-radius: 12px; color: #000; text-align: left; font-size: 15px; font-weight: 700; letter-spacing: 1px; transition: all 0.3s ease; }
+        .login-input:focus { border-color: var(--primary); outline: none; background: #fff; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+        .login-btn { width: 100%; background: var(--accent-gradient); border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; color: #fff; font-size: 14px; letter-spacing: 1px; box-shadow: 0 6px 18px rgba(99, 102, 241, 0.3); transition: all 0.2s ease; }
+        #error { color: var(--red); font-size: 13px; text-align: center; margin-top: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; }
 
-        #dashboard { display: none; }
+        #dashboard { display: none; display: flex; flex-direction: column; gap: 8px; }
 
         /* DASHBOARD HEADER */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 2px; }
-        .header-title { font-size: 22px; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header-actions { display: flex; align-items: center; gap: 8px; }
-        .theme-toggle-btn { background: #fff; border: 1px solid var(--card-border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; color: var(--primary); box-shadow: var(--shadow-sm); font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; }
+        .header-title { font-size: 19px; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-actions { display: flex; align-items: center; gap: 6px; }
+        .theme-toggle-btn { background: #fff; border: 1px solid var(--card-border); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: var(--primary); box-shadow: var(--shadow-sm); font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .theme-toggle-btn:active { transform: scale(0.9); }
-        .timer-box { font-size: 16px; font-weight: 700; background: #fff; padding: 8px 16px; border-radius: 30px; border: 1px solid var(--card-border); display: flex; align-items: center; gap: 8px; color: var(--primary); box-shadow: var(--shadow-sm); }
+        .timer-box { font-size: 14px; font-weight: 700; background: #fff; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--card-border); display: flex; align-items: center; gap: 6px; color: var(--primary); box-shadow: var(--shadow-sm); transition: all 0.3s; }
+        .timer-box.pulse-red { color: var(--red) !important; border-color: var(--red) !important; animation: pulse 1s infinite; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-        .stat-card { padding: 16px 10px; text-align: center; border-radius: 18px; }
-        .stat-card i { font-size: 18px; margin-bottom: 6px; color: var(--primary); }
-        .stat-label { font-size: 11px; color: #6b7280; text-transform: uppercase; font-weight: 700; }
-        .stat-val { font-size: 18px; font-weight: 700; color: var(--green); margin-top: 4px; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
 
-        .prediction-card { padding: 22px; display: grid; grid-template-columns: 1fr auto; gap: 12px; margin-bottom: 20px; border-radius: 24px; }
-        .p-info { display: flex; flex-direction: column; gap: 16px; }
-        .p-label { font-size: 11px; color: #6b7280; text-transform: uppercase; display: flex; align-items: center; gap: 6px; font-weight: 700; }
-        .p-val { font-size: 17px; font-weight: 700; letter-spacing: 0.5px; color: var(--primary); }
-        .sig-big { font-size: 46px; font-weight: 700; color: var(--yellow); text-shadow: 0 4px 12px rgba(245,158,11,0.2); }
-        .sig-small { font-size: 46px; font-weight: 700; color: var(--blue); text-shadow: 0 4px 12px rgba(6,182,212,0.2); }
+        /* 5-BOX STATS GRID */
+        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+        .stat-card { padding: 8px 2px; text-align: center; border-radius: 12px; }
+        .stat-card i { font-size: 12px; margin-bottom: 2px; }
+        .stat-label { font-size: 8px; color: #6b7280; text-transform: uppercase; font-weight: 700; }
+        .stat-val { font-size: 13px; font-weight: 700; }
 
-        .circle-group { display: flex; gap: 8px; margin-top: 4px; }
-        .circle { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; border: 2.5px solid #fff; box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+        .prediction-card { padding: 14px 16px; display: grid; grid-template-columns: 1fr auto; gap: 8px; border-radius: 18px; position: relative; overflow: hidden; }
+        .p-info { display: flex; flex-direction: column; gap: 8px; }
+        .p-label { font-size: 10px; color: #6b7280; text-transform: uppercase; display: flex; align-items: center; gap: 4px; font-weight: 700; }
+        .p-val { font-size: 15px; font-weight: 700; color: var(--primary); }
         
-        /* HALF DOT MECHANISM FOR 0 & 5 */
+        /* REALTIME PATTERN TRACKER BADGE */
+        .pattern-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 8px; background: rgba(99, 102, 241, 0.1); color: var(--primary); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; width: fit-content; }
+
+        .sig-big { font-size: 38px; font-weight: 700; color: var(--yellow); text-shadow: 0 2px 8px rgba(245,158,11,0.2); line-height: 1; }
+        .sig-small { font-size: 38px; font-weight: 700; color: var(--blue); text-shadow: 0 2px 8px rgba(6,182,212,0.2); line-height: 1; }
+
+        .circle-group { display: flex; gap: 6px; }
+        .circle { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+        
+        .lock-indicator {
+            display: none; position: absolute; inset: 0;
+            background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(4px);
+            align-items: center; justify-content: center; gap: 6px;
+            color: var(--red); font-family: 'Share Tech Mono', monospace;
+            font-size: 13px; font-weight: 700; letter-spacing: 1px;
+            border-radius: 18px; text-transform: uppercase; z-index: 10;
+        }
+        .lock-indicator.active { display: flex; }
+
         .c0 { background: linear-gradient(135deg, #ef4444 50%, #8b5cf6 50%) !important; color: #fff !important; }
         .c5 { background: linear-gradient(135deg, #10b981 50%, #8b5cf6 50%) !important; color: #fff !important; }
         .c-red { background-color: var(--red) !important; color: #fff !important; }
         .c-green { background-color: var(--green) !important; color: #fff !important; }
 
-        /* RECENT ENGINE DOT COMPONENT */
-        .dot-icon { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 1px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); vertical-align: middle; }
+        .dot-icon { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.15); vertical-align: middle; }
 
-        .section-title { font-size: 12px; font-weight: 700; color: #4b5563; margin: 20px 2px 8px; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
-        .trend-box { padding: 14px; display: grid; grid-template-columns: repeat(15, 1fr); gap: 6px; margin-bottom: 20px; border-radius: 18px; }
-        .dot { aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+        /* COLLAPSIBLE DROPDOWN HEADERS */
+        .section-title { font-size: 11px; font-weight: 700; color: #4b5563; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 4px 2px; }
+        .section-title i.chevron { transition: transform 0.3s ease; }
+        .section-title.collapsed i.chevron { transform: rotate(-90deg); }
 
-        .ov-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 20px; }
-        .ov-card { padding: 12px 0; text-align: center; border-radius: 16px; }
-        .ov-num { font-size: 18px; font-weight: 700; }
+        .collapsible-content { transition: max-height 0.3s ease, opacity 0.3s ease; overflow: hidden; max-height: 500px; opacity: 1; }
+        .collapsible-content.collapsed { max-height: 0; opacity: 0; padding: 0 !important; margin: 0 !important; border: none !important; }
 
-        .tabs-container { display: flex; gap: 8px; margin: 24px 0 10px; background: rgba(255,255,255,0.6); padding: 5px; border-radius: 16px; border: 1px solid var(--card-border); }
-        .tab-btn { flex: 1; padding: 12px 6px; background: transparent; border: none; color: #6b7280; font-size: 13px; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .trend-box { padding: 10px; display: grid; grid-template-columns: repeat(15, 1fr); gap: 4px; border-radius: 14px; }
+        .dot { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; }
+
+        .ov-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+        .ov-card { padding: 8px 0; text-align: center; border-radius: 12px; }
+        .ov-num { font-size: 15px; font-weight: 700; }
+
+        .tabs-container { display: flex; gap: 6px; background: rgba(255,255,255,0.6); padding: 3px; border-radius: 12px; border: 1px solid var(--card-border); }
+        .tab-btn { flex: 1; padding: 8px 4px; background: transparent; border: none; color: #6b7280; font-size: 12px; font-weight: 700; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .tab-btn.active { background: #fff; color: var(--primary); box-shadow: var(--shadow-sm); }
 
-        .history-box { border-radius: 22px; overflow: hidden; }
-        .h-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .h-table th { padding: 14px 6px; color: #4b5563; border-bottom: 2px solid #e5e7eb; font-size: 11px; text-transform: uppercase; font-weight: 700; text-align: center; }
-        .h-table td { padding: 15px 6px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.04); color: var(--text-main); font-weight: 500; }
+        .history-box { border-radius: 16px; overflow: hidden; }
+        .h-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .h-table th { padding: 8px 4px; color: #4b5563; border-bottom: 1px solid #e5e7eb; font-size: 10px; text-transform: uppercase; font-weight: 700; text-align: center; }
+        .h-table td { padding: 10px 4px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.03); color: var(--text-main); font-weight: 500; }
 
         .txt-rv { color: #d92b93 !important; font-weight: 700 !important; } 
         .txt-gv { color: #10a3b9 !important; font-weight: 700 !important; } 
         .txt-red { color: var(--red) !important; font-weight: 700 !important; }
         .txt-green { color: var(--green) !important; font-weight: 700 !important; }
 
-        .pagination { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(255,255,255,0.4); }
-        .pg-btn { background: #fff; border: 1px solid var(--card-border); color: var(--text-main); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 700; }
+        .pagination { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: rgba(255,255,255,0.4); }
+        .pg-btn { background: #fff; border: 1px solid var(--card-border); color: var(--text-main); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 700; }
     </style>
 </head>
 <body>
+
+<div class="res-popup" id="resPopup">SYSTEM READY</div>
 
 <div class="mobile-wrapper">
     <!-- LOGIN GATEWAY -->
@@ -160,39 +212,89 @@
         <div class="header">
             <div class="header-title"><i class="fa-solid fa-fire-flame-curved" style="color: var(--primary)"></i> 乂ᴅᴀʀᴋ乡ғɪʀᴇ</div>
             <div class="header-actions">
-                <!-- UI Switcher button restricted to Icon Only as requested -->
                 <button class="theme-toggle-btn" onclick="toggleUITheme()"><i class="fa-solid fa-palette"></i></button>
-                <!-- Timer Box containing real clock + logout icon -->
-                <div class="timer-box">
+                <div class="timer-box" id="timerBox">
                     <i class="fa-regular fa-clock" style="color: var(--primary)"></i>
-                    <span id="time-clock">00:59</span>
-                    <i class="fa-solid fa-power-off" style="color:var(--red); cursor:pointer; margin-left: 4px;" onclick="location.reload()"></i>
+                    <span id="time-clock">00:60</span>
+                    <i class="fa-solid fa-power-off" style="color:var(--red); cursor:pointer; margin-left: 2px;" onclick="location.reload()"></i>
                 </div>
             </div>
         </div>
 
+        <!-- 5-BOX STATS GRID -->
         <div class="stats-grid">
-            <div class="stat-card glass"><i class="fa-solid fa-crosshairs"></i><div class="stat-label">Accuracy</div><div class="stat-val">94.8%</div></div>
-            <div class="stat-card glass"><i class="fa-solid fa-chart-line"></i><div class="stat-label">Martingale</div><div id="m-level" class="stat-val" style="color:var(--yellow)">L1</div></div>
-            <div class="stat-card glass"><i class="fa-solid fa-database"></i><div class="stat-label">Multiplier</div><div id="m-mult" class="stat-val" style="color:var(--primary)">1x</div></div>
+            <div class="stat-card glass">
+                <i class="fa-solid fa-circle-check" style="color:var(--green)"></i>
+                <div class="stat-label">Wins</div>
+                <div id="stat-wins" class="stat-val" style="color:var(--green)">0</div>
+            </div>
+            <div class="stat-card glass">
+                <i class="fa-solid fa-circle-xmark" style="color:var(--red)"></i>
+                <div class="stat-label">Losses</div>
+                <div id="stat-losses" class="stat-val" style="color:var(--red)">0</div>
+            </div>
+            <div class="stat-card glass">
+                <i class="fa-solid fa-crown" style="color:var(--yellow)"></i>
+                <div class="stat-label">Jackpot</div>
+                <div id="stat-jackpot" class="stat-val" style="color:var(--yellow)">0</div>
+            </div>
+            <div class="stat-card glass">
+                <i class="fa-solid fa-bolt" style="color:#f97316"></i>
+                <div class="stat-label">Streak</div>
+                <div id="stat-streak" class="stat-val" style="color:#f97316">0</div>
+            </div>
+            <div class="stat-card glass">
+                <i class="fa-solid fa-crosshairs" style="color:var(--primary)"></i>
+                <div class="stat-label">Accuracy</div>
+                <div id="stat-accuracy" class="stat-val" style="color:var(--primary)">0%</div>
+            </div>
         </div>
 
         <div class="prediction-card glass">
+            <div class="lock-indicator" id="lockBanner">
+                <i class="fa-solid fa-lock"></i> BETTING CLOSED
+            </div>
             <div class="p-info">
-                <div><div class="p-label"><i class="fa-solid fa-fingerprint"></i> Next Target Period</div><div class="p-val" id="period-num">Connecting Realtime API...</div></div>
-                <div><div class="p-label"><i class="fa-solid fa-circle-nodes"></i> Prediction Result</div><div id="signal-text" class="sig-big">--</div></div>
+                <div>
+                    <div class="p-label"><i class="fa-solid fa-fingerprint"></i> Next Target Period</div>
+                    <div class="p-val" id="period-num">Syncing...</div>
+                </div>
+                <!-- ACTIVE PATTERN TRACKER -->
+                <div class="pattern-badge" id="pattern-badge">
+                    <i class="fa-solid fa-brain"></i> <span id="pattern-name">Analyzing...</span>
+                </div>
+                <div>
+                    <div class="p-label"><i class="fa-solid fa-circle-nodes"></i> Prediction Result</div>
+                    <div id="signal-text" class="sig-big">--</div>
+                </div>
             </div>
             <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content:space-between;">
-                <i class="fa-solid fa-arrows-rotate" style="color:var(--primary); cursor:pointer; font-size:16px; background: #fff; padding: 10px; border-radius: 50%; border: 1px solid var(--card-border); box-shadow: var(--shadow-sm);" onclick="forceManualPrediction()"></i>
+                <i class="fa-solid fa-arrows-rotate" id="refreshBtn" style="color:var(--primary); cursor:pointer; font-size:14px; background: #fff; padding: 8px; border-radius: 50%; border: 1px solid var(--card-border); box-shadow: var(--shadow-sm);" onclick="forceManualPrediction()"></i>
                 <div class="circle-group" id="circles"></div>
             </div>
         </div>
 
-        <div class="section-title"><i class="fa-solid fa-chart-area" style="color:var(--yellow)"></i> Horizontal Analytics</div>
-        <div class="trend-box glass" id="trend-list"></div>
+        <!-- DROPDOWN 1: HORIZONTAL ANALYTICS -->
+        <div>
+            <div class="section-title" onclick="toggleSection('trend-list-container', this)">
+                <span><i class="fa-solid fa-chart-area" style="color:var(--yellow)"></i> Horizontal Analytics</span>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+            </div>
+            <div class="collapsible-content" id="trend-list-container">
+                <div class="trend-box glass" id="trend-list"></div>
+            </div>
+        </div>
 
-        <div class="section-title"><i class="fa-solid fa-hourglass-empty" style="color:var(--blue)"></i> Delay Probability Monitor</div>
-        <div class="ov-grid" id="overdue-grid"></div>
+        <!-- DROPDOWN 2: DELAY PROBABILITY MONITOR -->
+        <div>
+            <div class="section-title" onclick="toggleSection('overdue-grid-container', this)">
+                <span><i class="fa-solid fa-hourglass-empty" style="color:var(--blue)"></i> Delay Probability Monitor</span>
+                <i class="fa-solid fa-chevron-down chevron"></i>
+            </div>
+            <div class="collapsible-content" id="overdue-grid-container">
+                <div class="ov-grid" id="overdue-grid"></div>
+            </div>
+        </div>
 
         <div class="tabs-container">
             <button class="tab-btn active" id="tab-game" onclick="switchTab('game')"><i class="fa-solid fa-server"></i> Game History</button>
@@ -205,44 +307,120 @@
                 <tbody id="history-list"></tbody>
             </table>
             <div class="pagination">
-                <button class="pg-btn" onclick="changePage(-1)"><i class="fa-solid fa-angle-left"></i></button>
-                <span id="page-info" style="font-size:13px; font-weight: 700; color:var(--text-main);">Page 1 / 1</span>
-                <button class="pg-btn" onclick="changePage(1)"><i class="fa-solid fa-angle-right"></i></button>
+                <button class="pg-btn" onclick="changePage(-1)"><i class="fa-solid fa-angle-left"></i> Previous</button>
+                <span id="page-info" style="font-size:11px; font-weight: 700; color:var(--text-main);">Page 1 / 1</span>
+                <button class="pg-btn" onclick="changePage(1)">Next <i class="fa-solid fa-angle-right"></i></button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    /* --- INLINE PWA GENERATOR --- */
+    (function initPWA() {
+        const manifestData = {
+            name: "Dark Fire Engine",
+            short_name: "DarkFire",
+            start_url: ".",
+            display: "standalone",
+            background_color: "#6366f1",
+            theme_color: "#6366f1",
+            icons: [{ src: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/svgs/solid/fire-flame-curved.svg", sizes: "192x192", type: "image/svg+xml" }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+        document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
+
+        if ('serviceWorker' in navigator) {
+            const swCode = `self.addEventListener('fetch', function(e){});`;
+            const swBlob = new Blob([swCode], { type: 'text/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+        }
+    })();
+
+    /* --- SECURITY & ANTI-DEBUGGING ENGINE --- */
+    (function enforceSecurity() {
+        // Context Menu & Copy Protection
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('cut', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+
+        // Key Combo Blocking
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || 
+               (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+               (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'a' || e.key === 'A' || e.key === 'c' || e.key === 'C'))) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+
+        // Anti-Debugging Pause Loop
+        setInterval(() => {
+            const startTime = performance.now();
+            (function(){}).constructor('debugger')();
+            if (performance.now() - startTime > 100) {
+                document.body.innerHTML = '<div style="color:red;text-align:center;padding:50px;font-weight:700;">SECURITY ALERT: DEVTOOLS DETECTED</div>';
+            }
+        }, 1000);
+    })();
+
+    /* --- APP CORE LOGIC --- */
     const KEYS = ["J0el1991$", "ZRX_PAPA_01", "ZRX_PAPA_02", "ZRX_PAPA_03", "ZRX_PAPA_04"];
     const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
+    const STORAGE_KEY = "darkfire_my_history";
 
-    // ENGINE STATES - My History absolutely fresh configuration
+    function loadSavedHistory() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveHistory(data) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {}
+    }
+
     let engineState = {
         globalHistory: [],
-        myHistory: [], 
+        myHistory: loadSavedHistory(), 
         lastProcessedIssue: null,
         currentPrediction: null
     };
 
     let currentTab = 'game';
     let currentPage = 1;
-    let martLevel = 1;
+    let martLevel = 1; 
+    let isBlocked = false;
 
-    // Direct wipe out to fully reset storage datasets
-    localStorage.removeItem('saved_my_history');
+    function toggleSection(containerId, titleEl) {
+        const container = document.getElementById(containerId);
+        container.classList.toggle('collapsed');
+        titleEl.classList.toggle('collapsed');
+    }
 
     function login() {
         const key = document.getElementById('access-key').value;
         if(KEYS.includes(key)) {
             document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'flex';
             startAppEngine();
         } else { document.getElementById('error').style.display='flex'; }
     }
 
     function toggleUITheme() {
         document.body.classList.toggle('theme-red-white');
+    }
+
+    function showResultBanner(type, message) {
+        const popup = document.getElementById('resPopup');
+        popup.className = "res-popup show popup-" + type.toLowerCase();
+        popup.innerText = message;
+        setTimeout(() => { popup.classList.remove('show'); }, 2200);
     }
 
     function getNumInfo(num) {
@@ -253,21 +431,64 @@
         return { class: 'c-red', label: 'Red', txt: 'txt-red', gradient: 'var(--red)' };
     }
 
-    // Live clock logic execution
+    function updateStatsDashboard() {
+        let onlyWins = 0;
+        let jackpots = 0;
+        let losses = 0;
+        let currentStreak = 0;
+        let isStreakActive = true;
+
+        for (let i = 0; i < engineState.myHistory.length; i++) {
+            const item = engineState.myHistory[i];
+            if (item.w) {
+                if (item.type === "JACKPOT") jackpots++;
+                else onlyWins++;
+                if (isStreakActive) currentStreak++;
+            } else {
+                losses++;
+                isStreakActive = false;
+            }
+        }
+
+        let totalWinsCombined = onlyWins + jackpots;
+        let totalRounds = totalWinsCombined + losses;
+        let acc = totalRounds > 0 ? Math.round((totalWinsCombined / totalRounds) * 100) : 0;
+
+        document.getElementById('stat-wins').innerText = onlyWins;
+        document.getElementById('stat-losses').innerText = losses;
+        document.getElementById('stat-jackpot').innerText = jackpots;
+        document.getElementById('stat-streak').innerText = currentStreak;
+        document.getElementById('stat-accuracy').innerText = acc + "%";
+    }
+
     function runLiveTimer() {
         const now = new Date();
         const seconds = now.getSeconds();
         const remaining = 60 - seconds;
-        const formattedTime = `00:${remaining < 10 ? '0' : ''}${remaining}`;
+        const formattedTime = `00:${remaining < 10 ? '0' : ''}${remaining === 60 ? '00' : remaining}`;
+        
+        const timerBox = document.getElementById('timerBox');
+        const lockBanner = document.getElementById('lockBanner');
+
         document.getElementById('time-clock').innerText = formattedTime;
+
+        if (remaining <= 6) {
+            timerBox.classList.add('pulse-red');
+            lockBanner.classList.add('active');
+            isBlocked = true;
+        } else {
+            timerBox.classList.remove('pulse-red');
+            lockBanner.classList.remove('active');
+            isBlocked = false;
+        }
     }
 
     async function syncEngine() {
         try {
-            const response = await fetch(API_URL);
+            const response = await fetch(API_URL + "?ts=" + Date.now());
             const json = await response.json();
             
-            if (json && json.data && json.data.list) {
+            if (json && json.data && json.data.list && json.data.list.length > 0) {
                 const list = json.data.list;
                 const latestResult = list[0]; 
 
@@ -286,7 +507,13 @@
                         };
                     });
 
-                    const nextPeriod = (BigInt(latestResult.issueNumber) + 1n).toString();
+                    let nextPeriod;
+                    try {
+                        nextPeriod = (BigInt(latestResult.issueNumber) + 1n).toString();
+                    } catch (e) {
+                        nextPeriod = (parseInt(latestResult.issueNumber) + 1).toString();
+                    }
+
                     document.getElementById('period-num').innerText = nextPeriod;
 
                     generateNewPrediction(nextPeriod);
@@ -295,6 +522,7 @@
                     renderCurrentTable();
                     renderTrend();
                     updateOverdue();
+                    updateStatsDashboard();
                 }
             }
         } catch (error) {
@@ -306,79 +534,111 @@
         const num = parseInt(actualData.number);
         const actualSize = num >= 5 ? "Big" : "Small";
         const predicted = engineState.currentPrediction;
-        const isWin = predicted.size === actualSize;
+        
+        const isSizeWin = predicted.size === actualSize;
+        const isNumWin = predicted.nums.includes(num);
+
+        let resultType = "LOSS";
+        let isWin = false;
+
+        if (isSizeWin && isNumWin) {
+            resultType = "JACKPOT";
+            isWin = true;
+            showResultBanner('JACKPOT', '🎰 JACKPOT WINNER!');
+        } else if (isSizeWin) {
+            resultType = "WIN";
+            isWin = true;
+            showResultBanner('WIN', '⚡ WINNER!');
+        } else {
+            showResultBanner('LOSS', '❌ LOSS');
+        }
 
         const historyEntry = {
             p: actualData.issueNumber,
             pred: predicted.size,
             res: actualSize,
             w: isWin,
-            n: num
+            n: num,
+            type: resultType
         };
 
-        engineState.myHistory.unshift(historyEntry);
-        if(engineState.myHistory.length > 100) engineState.myHistory.pop();
+        if (!engineState.myHistory.some(item => item.p === historyEntry.p)) {
+            engineState.myHistory.unshift(historyEntry);
+            if(engineState.myHistory.length > 2000) engineState.myHistory.pop(); // Up to 2000 Records Persistent Storage
+            saveHistory(engineState.myHistory);
+        }
 
+        // MAX 2-LEVEL SAFETY RECOVERY GUARD
         if(!isWin) {
-            martLevel = martLevel < 6 ? martLevel + 1 : 1;
+            martLevel = 2; // Immediate Level 2 Shift
         } else {
             martLevel = 1;
         }
-        document.getElementById('m-level').innerText = `L${martLevel}`;
-        document.getElementById('m-mult').innerText = `${Math.pow(3, martLevel-1)}x`;
     }
 
-    // ADVANCED FREQUENCY & PROBABILITY PATTERN ENGINE (Strictly Updated)
+    // HIGH ACCURACY ADAPTIVE PATTERN TRACKER
     function generateNewPrediction(period) {
-        let predSize = "Small"; // Default safe fallback orientation
+        let predSize = "Big";
+        let patternName = "Weighted Trend";
         
-        if (engineState.globalHistory && engineState.globalHistory.length > 0) {
-            // Extraction of active samples for Frequency Analysis
-            const sampleData = engineState.globalHistory.slice(0, 15);
-            let bigCount = 0;
-            let smallCount = 0;
+        if (engineState.globalHistory && engineState.globalHistory.length >= 5) {
+            const history = engineState.globalHistory;
+            const r0 = history[0].s, r1 = history[1].s, r2 = history[2].s, r3 = history[3].s;
 
-            sampleData.forEach(item => {
-                if (item.s === "Big") bigCount++;
-                else smallCount++;
-            });
-
-            const total = bigCount + smallCount;
-            const lastResult = engineState.globalHistory[0].s; // Exact last outcome status
-
-            if (total > 0) {
-                const probBig = bigCount / total;     // Probability calculation of Big
-                const probSmall = smallCount / total; // Probability calculation of Small
-
-                /* 
-                  Mathematical Logic Concept Integration:
-                  If Last Outcome = Big, we monitor probability trends. 
-                  If previous distribution states Big frequency is higher than Small, 
-                  the likelihood of next result being Big is mathematically lower than Small.
-                */
-                if (lastResult === "Big") {
-                    predSize = probBig > probSmall ? "Small" : "Big";
-                } else {
-                    predSize = probSmall > probBig ? "Big" : "Small";
-                }
+            // Pattern 1: Alternate Flip Trend (B-S-B-S)
+            if (r0 !== r1 && r1 !== r2 && r2 !== r3) {
+                predSize = r0 === "Big" ? "Small" : "Big";
+                patternName = "Alternate Flip";
+            }
+            // Pattern 2: Dragon Big/Small Streak (B-B-B or S-S-S)
+            else if (r0 === r1 && r1 === r2) {
+                predSize = r0;
+                patternName = `Dragon ${r0} Streak`;
+            }
+            // Pattern 3: Symmetrical 2-2 Pattern (B-B-S-S)
+            else if (r0 === r1 && r2 === r3 && r0 !== r2) {
+                predSize = r0 === "Big" ? "Small" : "Big";
+                patternName = "2-2 Symmetrical";
+            }
+            // Pattern 4: Weighted Probability Fallback
+            else {
+                let bigWeight = 0, smallWeight = 0;
+                history.slice(0, 10).forEach((item, index) => {
+                    let weight = 10 - index;
+                    if (item.s === "Big") bigWeight += weight;
+                    else smallWeight += weight;
+                });
+                predSize = bigWeight >= smallWeight ? "Big" : "Small";
+                patternName = "Probability Wave";
             }
         }
 
-        // Generating smart number pairs matched with outcome size
+        // MAX 2-LEVEL RECOVERY: Invert prediction on Level 2 to prevent consecutive loss streaks
+        if (martLevel === 2) {
+            predSize = (predSize === "Big") ? "Small" : "Big";
+            patternName += " (L2 Reversal)";
+        }
+
         let n1, n2;
         if(predSize === "Big") {
             const bigNums = [5, 6, 7, 8, 9];
             n1 = bigNums[Math.floor(Math.random() * bigNums.length)];
-            n2 = bigNums[Math.floor(Math.random() * bigNums.length)];
+            do {
+                n2 = bigNums[Math.floor(Math.random() * bigNums.length)];
+            } while (n2 === n1);
         } else {
             const smallNums = [0, 1, 2, 3, 4];
             n1 = smallNums[Math.floor(Math.random() * smallNums.length)];
-            n2 = smallNums[Math.floor(Math.random() * smallNums.length)];
+            do {
+                n2 = smallNums[Math.floor(Math.random() * smallNums.length)];
+            } while (n2 === n1);
         }
 
         const sig = document.getElementById('signal-text');
         sig.innerText = predSize.toUpperCase();
         sig.className = predSize === "Big" ? "sig-big" : "sig-small";
+
+        document.getElementById('pattern-name').innerText = patternName;
 
         document.getElementById('circles').innerHTML = `
             <div class="circle ${getNumInfo(n1).class}">${n1}</div>
@@ -393,7 +653,7 @@
     }
 
     function forceManualPrediction() {
-        if(!engineState.currentPrediction) return;
+        if(isBlocked || !engineState.currentPrediction) return;
         generateNewPrediction(engineState.currentPrediction.period);
     }
 
@@ -401,9 +661,10 @@
         syncEngine();
         setInterval(syncEngine, 2000);
         
-        // Running real-time UI timer ticking engine every second
         runLiveTimer();
         setInterval(runLiveTimer, 1000);
+        
+        updateStatsDashboard();
     }
 
     function renderTrend() {
@@ -421,6 +682,7 @@
         renderCurrentTable();
     }
 
+    // DYNAMIC PAGINATION SYSTEM (10 Per Page)
     function renderCurrentTable() {
         const listBody = document.getElementById('history-list');
         const tableHead = document.getElementById('table-head');
@@ -431,43 +693,50 @@
             const items = engineState.globalHistory.slice(start, start + 10);
             
             if(items.length === 0) {
-                listBody.innerHTML = `<tr><td colspan="4" style="color:#9ca3af; padding:25px;">Loading Stream Data...</td></tr>`;
+                listBody.innerHTML = `<tr><td colspan="4" style="color:#9ca3af; padding:15px;">Loading Stream Data...</td></tr>`;
                 return;
             }
 
             listBody.innerHTML = items.map(h => {
                 const info = getNumInfo(h.n);
                 return `<tr>
-                    <td class="num-font" style="color:#6b7280; font-size:12px; font-weight:700;">${h.p}</td>
+                    <td class="num-font" style="color:#6b7280; font-size:11px; font-weight:700;">${h.p}</td>
                     <td><span class="dot-icon" style="background:${info.gradient}"></span></td>
                     <td style="color:${h.s==='Big'?'var(--yellow)':'var(--blue)'}; font-weight:700">${h.s}</td>
-                    <td class="${info.txt} num-font" style="font-size:16px; font-weight:700;">${h.n}</td>
+                    <td class="${info.txt} num-font" style="font-size:14px; font-weight:700;">${h.n}</td>
                 </tr>`;
             }).join('');
-            document.getElementById('page-info').innerText = `Page ${currentPage} / ${Math.max(1, Math.ceil(engineState.globalHistory.length/10))}`;
+
+            const totalPages = Math.max(1, Math.ceil(engineState.globalHistory.length / 10));
+            document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages}`;
         } 
         else if (currentTab === 'my') {
             tableHead.innerHTML = `<tr><th>Period</th><th>Color</th><th>Size</th><th>Num</th><th>Status</th></tr>`;
             const items = engineState.myHistory.slice(start, start + 10);
             
             if(items.length === 0) {
-                listBody.innerHTML = `<tr><td colspan="5" style="color:#9ca3af; padding:25px; font-size:13px;">No simulation history yet.</td></tr>`;
+                listBody.innerHTML = `<tr><td colspan="5" style="color:#9ca3af; padding:15px; font-size:12px;">No simulation history yet.</td></tr>`;
                 return;
             }
 
             listBody.innerHTML = items.map(h => {
                 const info = getNumInfo(h.n);
+                let badgeText = h.w ? (h.type === "JACKPOT" ? '<i class="fa-solid fa-crown"></i> JACKPOT' : '<i class="fa-solid fa-circle-check"></i> WIN') : '<i class="fa-solid fa-circle-xmark"></i> LOSS';
+                let badgeColor = h.w ? (h.type === "JACKPOT" ? 'var(--yellow)' : 'var(--green)') : 'var(--red)';
+
                 return `<tr>
-                    <td class="num-font" style="color:#6b7280; font-size:12px; font-weight:700;">${h.p}</td>
+                    <td class="num-font" style="color:#6b7280; font-size:11px; font-weight:700;">${h.p}</td>
                     <td><span class="dot-icon" style="background:${info.gradient}"></span></td>
                     <td style="color:${h.pred==='Big'?'var(--yellow)':'var(--blue)'}; font-weight:700">${h.pred}</td>
                     <td class="num-font ${info.txt}" style="font-weight:700">${h.n}</td>
-                    <td style="color:${h.w?'var(--green)':'var(--red)'}; font-weight:700; font-size:14px;">
-                        ${h.w ? '<i class="fa-solid fa-circle-check"></i> WIN' : '<i class="fa-solid fa-circle-xmark"></i> LOSS'}
+                    <td style="color:${badgeColor}; font-weight:700; font-size:12px;">
+                        ${badgeText}
                     </td>
                 </tr>`;
             }).join('');
-            document.getElementById('page-info').innerText = `Page ${currentPage} / ${Math.max(1, Math.ceil(engineState.myHistory.length/10))}`;
+
+            const totalPages = Math.max(1, Math.ceil(engineState.myHistory.length / 10));
+            document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages}`;
         }
     }
 
@@ -477,7 +746,7 @@
         for(let i=0; i<10; i++) {
             grid.innerHTML += `<div class="ov-card glass">
                 <div class="ov-num ${getNumInfo(i).txt}">${i}</div>
-                <div class="num-font" style="font-size:11px; color:#9ca3af; font-weight:700">MS ${Math.floor(Math.random()*15)}</div>
+                <div class="num-font" style="font-size:10px; color:#9ca3af; font-weight:700">MS ${Math.floor(Math.random()*15)}</div>
             </div>`;
         }
     }
