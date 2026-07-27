@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#6366f1">
-    <title>乂ᴅᴀʀᴋ乡ғɪʀᴇ v11.0 | OFFICIAL REALTIME SYNC</title>
+    <title>乂ᴅᴀʀᴋ乡ғɪʀᴇ v11.0 | RESET & DEEP ANALYTICS</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght=400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     
-    <!-- INLINE PWA MANIFEST -->
     <link rel="manifest" id="manifest-placeholder">
 
     <style>
-        /* --- SECURITY & COPY PROTECTION --- */
         * {
             -webkit-user-select: none !important;
             -moz-user-select: none !important;
@@ -25,7 +23,6 @@
             font-family: 'Ubuntu', sans-serif;
         }
 
-        /* --- THEME ROOT CONFIGURATION --- */
         :root {
             --bg-gradient: linear-gradient(135deg, #f5f7ff 0%, #e4ecfa 50%, #f9f6fc 100%);
             --card-bg: rgba(255, 255, 255, 0.85);
@@ -69,7 +66,6 @@
         .mobile-wrapper { width: 100%; max-width: 430px; min-height: 100vh; position: relative; padding: 8px 10px; display: flex; flex-direction: column; gap: 8px; }
         .glass { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--card-border); border-radius: 16px; box-shadow: var(--shadow-md); transition: background 0.3s, border 0.3s; }
 
-        /* POPUP NOTIFICATION BANNER */
         .res-popup {
             position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
             width: 88%; max-width: 360px; padding: 10px 16px; border-radius: 14px;
@@ -84,7 +80,6 @@
         .popup-win { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 0 16px rgba(16, 185, 129, 0.5); }
         .popup-loss { background: linear-gradient(135deg, #ef4444, #991b1b); box-shadow: 0 0 16px rgba(239, 68, 68, 0.5); }
 
-        /* LOGIN SCREEN */
         #login-screen { position: absolute; inset: 0; z-index: 999; background: var(--bg-gradient); display: flex; flex-direction: column; padding: 20px; justify-content: center; align-items: center; }
         .login-illustration { width: 70px; height: 70px; background: var(--accent-gradient); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3); margin-bottom: 16px; color: #fff; font-size: 30px; }
         .login-welcome { text-align: center; margin-bottom: 20px; }
@@ -101,12 +96,14 @@
 
         #dashboard { display: none; display: flex; flex-direction: column; gap: 8px; }
 
-        /* DASHBOARD HEADER */
         .header { display: flex; justify-content: space-between; align-items: center; padding: 2px 0; }
         .header-title { font-size: 19px; font-weight: 700; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .header-actions { display: flex; align-items: center; gap: 6px; }
-        .theme-toggle-btn { background: #fff; border: 1px solid var(--card-border); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: var(--primary); box-shadow: var(--shadow-sm); font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-        .theme-toggle-btn:active { transform: scale(0.9); }
+        
+        .action-btn { background: #fff; border: 1px solid var(--card-border); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; color: var(--primary); box-shadow: var(--shadow-sm); font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .action-btn:active { transform: scale(0.9); }
+        .reset-btn { color: var(--red) !important; }
+
         .timer-box { font-size: 14px; font-weight: 700; background: #fff; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--card-border); display: flex; align-items: center; gap: 6px; color: var(--primary); box-shadow: var(--shadow-sm); transition: all 0.3s; }
         .timer-box.pulse-red { color: var(--red) !important; border-color: var(--red) !important; animation: pulse 1s infinite; }
 
@@ -116,7 +113,6 @@
             100% { transform: scale(1); }
         }
 
-        /* 5-BOX STATS GRID */
         .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
         .stat-card { padding: 8px 2px; text-align: center; border-radius: 12px; }
         .stat-card i { font-size: 12px; margin-bottom: 2px; }
@@ -128,7 +124,6 @@
         .p-label { font-size: 10px; color: #6b7280; text-transform: uppercase; display: flex; align-items: center; gap: 4px; font-weight: 700; }
         .p-val { font-size: 15px; font-weight: 700; color: var(--primary); }
         
-        /* REALTIME PATTERN TRACKER BADGE */
         .pattern-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 8px; background: rgba(99, 102, 241, 0.1); color: var(--primary); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; width: fit-content; }
 
         .sig-big { font-size: 38px; font-weight: 700; color: var(--yellow); text-shadow: 0 2px 8px rgba(245,158,11,0.2); line-height: 1; }
@@ -154,7 +149,6 @@
 
         .dot-icon { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.15); vertical-align: middle; }
 
-        /* COLLAPSIBLE DROPDOWN HEADERS */
         .section-title { font-size: 11px; font-weight: 700; color: #4b5563; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 4px 2px; }
         .section-title i.chevron { transition: transform 0.3s ease; }
         .section-title.collapsed i.chevron { transform: rotate(-90deg); }
@@ -192,7 +186,6 @@
 <div class="res-popup" id="resPopup">SYSTEM READY</div>
 
 <div class="mobile-wrapper">
-    <!-- LOGIN GATEWAY -->
     <div id="login-screen">
         <div class="login-illustration"><i class="fa-solid fa-fire-flame-curved"></i></div>
         <div class="login-welcome"><h2>Welcome Back</h2><p>Please enter your secure access key</p></div>
@@ -207,12 +200,12 @@
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
     <div id="dashboard">
         <div class="header">
             <div class="header-title"><i class="fa-solid fa-fire-flame-curved" style="color: var(--primary)"></i> 乂ᴅᴀʀᴋ乡ғɪʀᴇ</div>
             <div class="header-actions">
-                <button class="theme-toggle-btn" onclick="toggleUITheme()"><i class="fa-solid fa-palette"></i></button>
+                <button class="action-btn reset-btn" title="Reset History Data" onclick="resetHistoryData()"><i class="fa-solid fa-rotate-left"></i></button>
+                <button class="action-btn" title="Toggle Theme" onclick="toggleUITheme()"><i class="fa-solid fa-palette"></i></button>
                 <div class="timer-box" id="timerBox">
                     <i class="fa-regular fa-clock" style="color: var(--primary)"></i>
                     <span id="time-clock">00:60</span>
@@ -221,7 +214,6 @@
             </div>
         </div>
 
-        <!-- 5-BOX STATS GRID -->
         <div class="stats-grid">
             <div class="stat-card glass">
                 <i class="fa-solid fa-circle-check" style="color:var(--green)"></i>
@@ -259,7 +251,6 @@
                     <div class="p-label"><i class="fa-solid fa-fingerprint"></i> Next Target Period</div>
                     <div class="p-val" id="period-num">Syncing...</div>
                 </div>
-                <!-- ACTIVE PATTERN TRACKER -->
                 <div class="pattern-badge" id="pattern-badge">
                     <i class="fa-solid fa-brain"></i> <span id="pattern-name">Analyzing...</span>
                 </div>
@@ -274,7 +265,6 @@
             </div>
         </div>
 
-        <!-- DROPDOWN 1: HORIZONTAL ANALYTICS -->
         <div>
             <div class="section-title" onclick="toggleSection('trend-list-container', this)">
                 <span><i class="fa-solid fa-chart-area" style="color:var(--yellow)"></i> Horizontal Analytics</span>
@@ -285,7 +275,6 @@
             </div>
         </div>
 
-        <!-- DROPDOWN 2: DELAY PROBABILITY MONITOR -->
         <div>
             <div class="section-title" onclick="toggleSection('overdue-grid-container', this)">
                 <span><i class="fa-solid fa-hourglass-empty" style="color:var(--blue)"></i> Delay Probability Monitor</span>
@@ -316,7 +305,6 @@
 </div>
 
 <script>
-    /* --- INLINE PWA GENERATOR --- */
     (function initPWA() {
         const manifestData = {
             name: "Dark Fire Engine",
@@ -337,15 +325,12 @@
         }
     })();
 
-    /* --- SECURITY & ANTI-DEBUGGING ENGINE --- */
     (function enforceSecurity() {
-        // Context Menu & Copy Protection
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('copy', e => e.preventDefault());
         document.addEventListener('cut', e => e.preventDefault());
         document.addEventListener('selectstart', e => e.preventDefault());
 
-        // Key Combo Blocking
         document.addEventListener('keydown', e => {
             if (e.key === 'F12' || 
                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
@@ -355,7 +340,6 @@
             }
         });
 
-        // Anti-Debugging Pause Loop
         setInterval(() => {
             const startTime = performance.now();
             (function(){}).constructor('debugger')();
@@ -365,7 +349,6 @@
         }, 1000);
     })();
 
-    /* --- APP CORE LOGIC --- */
     const KEYS = ["J0el1991$", "ZRX_PAPA_01", "ZRX_PAPA_02", "ZRX_PAPA_03", "ZRX_PAPA_04"];
     const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json";
     const STORAGE_KEY = "darkfire_my_history";
@@ -383,6 +366,18 @@
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         } catch (e) {}
+    }
+
+    // RESET HISTORY DATA FUNCTION
+    function resetHistoryData() {
+        if(confirm("Are you sure you want to reset all tracking history?")) {
+            engineState.myHistory = [];
+            localStorage.removeItem(STORAGE_KEY);
+            martLevel = 1;
+            updateStatsDashboard();
+            renderCurrentTable();
+            showResultBanner('WIN', 'HISTORY RESET COMPLETED');
+        }
     }
 
     let engineState = {
@@ -564,75 +559,71 @@
 
         if (!engineState.myHistory.some(item => item.p === historyEntry.p)) {
             engineState.myHistory.unshift(historyEntry);
-            if(engineState.myHistory.length > 2000) engineState.myHistory.pop(); // Up to 2000 Records Persistent Storage
+            if(engineState.myHistory.length > 2000) engineState.myHistory.pop();
             saveHistory(engineState.myHistory);
         }
 
-        // MAX 2-LEVEL SAFETY RECOVERY GUARD
         if(!isWin) {
-            martLevel = 2; // Immediate Level 2 Shift
+            martLevel = 2;
         } else {
             martLevel = 1;
         }
     }
 
-    // HIGH ACCURACY ADAPTIVE PATTERN TRACKER
+    /* --- DEEP ANALYTICS PREDICTION ENGINE --- */
     function generateNewPrediction(period) {
         let predSize = "Big";
-        let patternName = "Weighted Trend";
+        let patternName = "20-Period WMA";
         
-        if (engineState.globalHistory && engineState.globalHistory.length >= 5) {
-            const history = engineState.globalHistory;
+        const history = engineState.globalHistory;
+        const sampleDepth = Math.min(history.length, 20);
+
+        if (sampleDepth >= 5) {
             const r0 = history[0].s, r1 = history[1].s, r2 = history[2].s, r3 = history[3].s;
 
-            // Pattern 1: Alternate Flip Trend (B-S-B-S)
-            if (r0 !== r1 && r1 !== r2 && r2 !== r3) {
-                predSize = r0 === "Big" ? "Small" : "Big";
-                patternName = "Alternate Flip";
-            }
-            // Pattern 2: Dragon Big/Small Streak (B-B-B or S-S-S)
-            else if (r0 === r1 && r1 === r2) {
+            if (r0 === r1 && r1 === r2) {
                 predSize = r0;
-                patternName = `Dragon ${r0} Streak`;
+                patternName = `Dragon ${r0} (L${sampleDepth})`;
             }
-            // Pattern 3: Symmetrical 2-2 Pattern (B-B-S-S)
+            else if (r0 !== r1 && r1 !== r2 && r2 !== r3) {
+                predSize = r0 === "Big" ? "Small" : "Big";
+                patternName = `ZigZag Flip (L${sampleDepth})`;
+            }
             else if (r0 === r1 && r2 === r3 && r0 !== r2) {
                 predSize = r0 === "Big" ? "Small" : "Big";
-                patternName = "2-2 Symmetrical";
+                patternName = `2-2 Pair (L${sampleDepth})`;
             }
-            // Pattern 4: Weighted Probability Fallback
             else {
-                let bigWeight = 0, smallWeight = 0;
-                history.slice(0, 10).forEach((item, index) => {
-                    let weight = 10 - index;
-                    if (item.s === "Big") bigWeight += weight;
+                let bigWeight = 0;
+                let smallWeight = 0;
+
+                for (let i = 0; i < sampleDepth; i++) {
+                    let weight = sampleDepth - i;
+                    if (history[i].s === "Big") bigWeight += weight;
                     else smallWeight += weight;
-                });
+                }
+
                 predSize = bigWeight >= smallWeight ? "Big" : "Small";
-                patternName = "Probability Wave";
+                patternName = `WMA Depth Analysis`;
             }
         }
 
-        // MAX 2-LEVEL RECOVERY: Invert prediction on Level 2 to prevent consecutive loss streaks
         if (martLevel === 2) {
             predSize = (predSize === "Big") ? "Small" : "Big";
-            patternName += " (L2 Reversal)";
+            patternName += " [L2 Recovery]";
         }
 
-        let n1, n2;
-        if(predSize === "Big") {
-            const bigNums = [5, 6, 7, 8, 9];
-            n1 = bigNums[Math.floor(Math.random() * bigNums.length)];
-            do {
-                n2 = bigNums[Math.floor(Math.random() * bigNums.length)];
-            } while (n2 === n1);
-        } else {
-            const smallNums = [0, 1, 2, 3, 4];
-            n1 = smallNums[Math.floor(Math.random() * smallNums.length)];
-            do {
-                n2 = smallNums[Math.floor(Math.random() * smallNums.length)];
-            } while (n2 === n1);
-        }
+        const validNums = predSize === "Big" ? [5, 6, 7, 8, 9] : [0, 1, 2, 3, 4];
+        let freqMap = {};
+        validNums.forEach(n => freqMap[n] = 0);
+
+        history.slice(0, sampleDepth).forEach(item => {
+            if (validNums.includes(item.n)) freqMap[item.n]++;
+        });
+
+        let sortedNums = validNums.sort((a, b) => freqMap[b] - freqMap[a]);
+        let n1 = sortedNums[0];
+        let n2 = sortedNums[sortedNums.length - 1];
 
         const sig = document.getElementById('signal-text');
         sig.innerText = predSize.toUpperCase();
@@ -682,7 +673,6 @@
         renderCurrentTable();
     }
 
-    // DYNAMIC PAGINATION SYSTEM (10 Per Page)
     function renderCurrentTable() {
         const listBody = document.getElementById('history-list');
         const tableHead = document.getElementById('table-head');
